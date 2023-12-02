@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-image: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        form {
+            background-color: #ffffffe0;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+            width: 300px;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            transition: border-color 0.3s;
+        }
+        input:focus {
+            border-color: #4285f4;
+            outline: none;
+        }
+        button {
+            background-color: #4285f4;
+            color: #fff;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #357abf;
+        }
+        #passwordFeedback {
+            margin-bottom: 10px;
+        }
+        .google-btn {
+            display: block;
+            margin: 15px auto;
+            padding: 12px 20px;
+            background-color: #4285f4;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .google-btn:hover {
+            background-color: #357abf;
+        }
+        .google-btn i {
+            margin-right: 5px;
+        }
+        #privacyConsent {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <form action="/register" method="post">
+        <% if (typeof errors !== 'undefined' && errors.length > 0) { %>
+            <ul>
+                <% errors.forEach(error => { %>
+                    <li style="color: red;"><%= error %></li>
+                <% }); %>
+            </ul>
+        <% } %>
+        <input type="text" name="username" placeholder="Username" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <small>We'll never share your email with anyone else and will only use it for account-related notifications.</small>
+        <input type="password" id="password" name="password" placeholder="Password" required oninput="checkPasswordComplexity()">
+        <div id="passwordFeedback"></div>
+        <button type="submit"><i class="fas fa-user-plus"></i> Register</button>
+    </form>    
+    <script>
+        function checkPasswordComplexity() {
+            const password = document.getElementById('password').value;
+            const feedback = document.getElementById('passwordFeedback');
+            
+            if (password.length < 8) {
+                feedback.textContent = 'Password must be at least 8 characters long.';
+                feedback.style.color = 'red';
+                return;
+            }
+            if (!/[a-z]/.test(password)) {
+                feedback.textContent = 'Password must contain at least one lowercase character.';
+                feedback.style.color = 'red';
+                return;
+            }
+            if (!/[A-Z]/.test(password)) {
+                feedback.textContent = 'Password must contain at least one uppercase character.';
+                feedback.style.color = 'red';
+                return;
+            }
+            if (!/[0-9]/.test(password)) {
+                feedback.textContent = 'Password must contain at least one number.';
+                feedback.style.color = 'red';
+                return;
+            }
+            
+            feedback.textContent = 'Password looks good!';
+            feedback.style.color = 'green';
+        }
+    </script>
+</body>
+</html>

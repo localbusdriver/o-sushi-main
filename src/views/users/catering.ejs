@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial scale = 1.0" />
+    <title>O'Sushi Catering</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Courgette&family=Poppins:wght@100;200;300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script
+      src="https://kit.fontawesome.com/de95fd432b.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+
+  <body>
+    <!-- Nav Bar -->
+    <section class="menu-sub-header">
+      <nav>
+        <a class="logo" href="index.html">O'sushi</a>
+        <div class="nav-links" id="navLinks">
+          <i class="fa-solid fa-xmark" onclick="hideMenu()"></i>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="menu.html">Menu</a></li>
+            <li><a href="catering.html">Catering</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <i class="fa-solid fa-bars" onclick="showMenu()"></i>
+      </nav>
+
+      <h1>Catering</h1>
+    </section>
+
+    <section class="catering-page">
+      <div class="row">
+        <div class="cater-col">
+          <h1>Cater from O'sushi</h1>
+          <p>
+            Cater from the best sushi store in Wellington.
+            <br>Offering beautiful platters to share with friends and families to make
+            your events even better.
+          </p>
+          <a href="contact.html" class="hero-btn blue-btn">Contact us</a>
+        </div>
+        <div class="cater-col">
+          <img src="/assets/sushi.jpeg" />
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <section class="footer">
+      <h4>About Us</h4>
+      <p>
+        Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eaque eum
+        aperiam accusamus. Consequatur dolorem sed optio laudantium asperiores
+        assumenda incidunt, autem quidem rem doloribus enim tenetur?
+        Necessitatibus quam reprehenderit voluptatibus.
+      </p>
+      <div class="icons">
+        <i class="fa fa-facebook"></i>
+        <i class="fa fa-instagram"></i>
+        <i class="fa fa-linkedin"></i>
+      </div>
+    </section>
+
+    <!-- JavaScript for Toggle Menu -->
+    <script>
+      var navLinks = document.getElementById("navLinks");
+      function showMenu() {
+        navLinks.style.right = "0";
+      }
+
+      function hideMenu() {
+        navLinks.style.right = "-200px";
+      }
+    </script>
+  </body>
+</html>
