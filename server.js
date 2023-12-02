@@ -1,10 +1,10 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const session = require('express-session');
-const userController = require('./controllers/userController');
+const userController = require('./src/controllers/userController');
 const mongoose = require('mongoose');
-const User = require('./models/User'); 
-const ensureAuthenticated = require('./middlewares/ensureAuthenticated.js');
+const User = require('./src/models/User'); 
+const ensureAuthenticated = require('./src/middlewares/ensureAuthenticated.js');
 const path = require('path');
 const morgan = require('morgan');
 const cors = require('cors');
@@ -31,7 +31,7 @@ mongoose.connect(MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true})
 
 const app = express();
 
-// app.use(express.static(__dirname + '/src'));
+app.use(express.static(path.join(__dirname + './public')));
 
 app.use(cors());
 
@@ -59,7 +59,41 @@ app.set('view engine', 'ejs');
 app.set('views', [path.join(__dirname, 'views'), path.join(__dirname, 'views', 'users'), path.join(__dirname, 'views', 'products')]);
 
 app.get('/', (req, res) => {
-    res.render('home');  //to home.ejs
+    try{
+        res.render('home');  //to home.ejs
+    }
+    catch{
+        console.log(error);
+        res.status(500).send('Server error');
+    }
+});
+
+app.get('/contact', async (req, res) => {
+    try{
+        res.render('contact')
+    } 
+    catch{
+        console.log(error);
+        res.status(500).send('Server error');
+    }
+});
+
+app.get('/menu', async (req, res) => {
+    try {
+        res.render('menu');
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Server error');
+    }
+});
+
+app.get('/about', async (req, res) => {
+    try {
+        res.render('about');
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Server error');
+    }
 });
 
 app.get('/register', userController.getRegister);
@@ -84,16 +118,6 @@ app.get('/reset/:token', userController.getNewPassword);
 //set the new password
 app.post('/new-password', userController.postNewPassword);
 
-app.get('/items', async (req, res) => {
-    try {
-        const recommendedItems = items
-        res.render('items', { items,recommendedItems });
-    } catch (error) {
-        console.error(error);
-        res.status(500).send('Server error');
-    }
-});
-
 app.get('/item/:itemId', (req, res) => {
     const item = items.find(i => i.id === parseInt(req.params.itemId));
     if (!item) {
@@ -104,7 +128,6 @@ app.get('/item/:itemId', (req, res) => {
      res.setHeader('Expires', new Date(Date.now() + 3600000).toUTCString()); // 1 hour from now
      res.setHeader('Last-Modified', new Date().toUTCString()); // Current server time
      
-    
     res.json(item);
 });
 
