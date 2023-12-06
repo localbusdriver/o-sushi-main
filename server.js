@@ -164,67 +164,6 @@ app.post('/item', ensureAuthenticated, (req, res) => {
     res.json(newItem);
 });
 
-app.post('/purchase/:itemId', ensureAuthenticated, async (req, res) => {
-    try {
-        const user = await User.findById(req.session.user._id);
-        if (!user.purchaseHistory) {
-            user.purchaseHistory = [];
-        }
-        user.purchaseHistory.push(req.params.itemId);
-        await user.save();
-        res.json({ msg: 'Item purchased' });
-    } catch (error) {
-        console.error(error);
-        res.status(500).send('Server error');
-    }
-});
-
-function countPurchases(purchaseHistory) {
-    const genreCounts = {};
-    for (let itemId of purchaseHistory) {
-        const item = items.find(i => i.id === parseInt(itemId));
-        if (item) {
-            const genre = item.genre;
-            if (!genreCounts[genre]) {
-                genreCounts[genre] = 0;
-            }
-            genreCounts[genre]++;
-        }
-    }
-    return genreCounts;
-}
-
-function getRandomItemsFromGenre(genre, count) {
-    const genreItems = items.filter(item => item.genre === genre);
-    const shuffled = genreItems.sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, count);
-}
-
-app.get('/recommended-items', ensureAuthenticated, async (req, res) => {
-    try {
-        const user = await User.findById(req.session.user._id);
-        
-        if (!user.purchaseHistory || user.purchaseHistory.length === 0) {
-            return res.render('items', { items: [], recommendedItems: [] }); 
-        }
-
-        const genreCounts = countPurchases(user.purchaseHistory);
-        
-        // Get most purchased genre
-        const mostPurchasedGenre = Object.keys(genreCounts).reduce((a, b) => genreCounts[a] > genreCounts[b] ? a : b);
-
-        // Obtain 5 random items from the most purchased genre
-        const recommendedItems = getRandomItemsFromGenre(mostPurchasedGenre, 5);
-
-        res.render('items', { items: items, recommendedItems: recommendedItems });
-
-    } catch (error) {
-        console.error(error);
-        res.status(500).send('Server error');
-    }
-});
-
 app.use(express.static(path.join(__dirname, 'public')));
-
 
 app.use(morgan('tiny'));
