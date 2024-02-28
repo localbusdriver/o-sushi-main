@@ -39,6 +39,11 @@
           </ul>
         </div>
       </div>
+
+      <div class="text-box">
+        <h1>Contact Us</h1>
+        <p>Contact us or visit us!</p>
+      </div>
     </section>
 
     <!-- Contact us content -->
@@ -89,31 +94,32 @@
         </div>
 
         <div class="contact-col">
-          <form
-            action="https://formsubmit.co/jamesla200210@gmail.com"
-            method="POST"
-          >
+          <form method="POST" action="/contact" id="contact-form">
             <input
               type="text"
               name="name"
+              id="name"
               placeholder="Enter your name"
               required
             />
             <input
               type="email"
               name="email"
+              id="email"
               placeholder="Enter email address"
               required
             />
             <input
               type="text"
               name="subject"
+              id="subject"
               placeholder="Enter your subject"
               required
             />
             <textarea
               rows="8"
-              name="comments, questions"
+              name="message"
+              id="message"
               placeholder="message"
             ></textarea>
             <!-- <button type="submit" class="hero-btn blue-btn" value="send"> -->
@@ -151,50 +157,6 @@
       function hideMenu() {
         navLinks.style.right = "-200px";
       }
-
-      const constraints = {
-        name: {
-          presence: { allowEmpty: false },
-        },
-        email: {
-          presence: { allowEmpty: false },
-          email: true,
-        },
-        subject: {
-          presence: { allowEmpty: false },
-        },
-        message: {
-          presence: { allowEmpty: false },
-        },
-      };
-
-      const form = document.getElementById("contact-form");
-
-      form.addEventListener(
-        "submit",
-        function (event) {
-          const formValues = {
-            name: form.elements.name.value,
-            email: form.elements.email.value,
-            subject: form.elements.email.value,
-            message: form.elements.message.value,
-          };
-
-          const errors = validate(formValues, constraints);
-
-          if (errors) {
-            event.preventDefault();
-            const errorMessage = Object.values(errors)
-              .map(function (fieldValues) {
-                return fieldValues.join(", ");
-              })
-              .join("\n");
-
-            alert(errorMessage);
-          }
-        },
-        false
-      );
     </script>
   </body>
 </html>
