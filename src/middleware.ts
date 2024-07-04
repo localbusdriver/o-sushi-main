@@ -1,12 +1,14 @@
-// import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
 import { NextRequest } from "next/server";
+import { jwtVerify } from "jose";
 
 export async function middleware(req: NextRequest) {
   console.log("Middleware executed");
 
-  //   const token = await getToken({ req, secret: process.env.JWT_SECRET });
+  // const token = await getToken({ req, secret: process.env.JWT_SECRET });
   const { pathname } = req.nextUrl;
+  const token = req.cookies.get("token")?.value;
+  const validToken = token ? await isValidToken(token) : null;
 
   const publicPaths: string[] = [
     "/api/auth/",
@@ -21,11 +23,24 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/home", req.url));
   }
 
+
+
+  if(pathname === "/login" && validToken){
+    return NextResponse.redirect(new URL("/protected/main", req.url));
+  }
+
   if (pathname.startsWith("/protected")) {
-    const token = req.cookies?.get("token");
-    if (!token) {
+
+    console.log("/protected middleware executed");
+
+    if (!validToken) {
       return NextResponse.redirect(new URL("/login", req.url));
     }
+    else{
+      return NextResponse.next();
+    }
+
+    
   }
   //   if (!token && isPublicPath) {
   //     return NextResponse.next();
@@ -53,12 +68,24 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|api/auth/|/protected/:path*).*)"],
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico|api/auth/|/protected/:path*).*)",
+  ],
 };
 
 interface Token {
   refreshToken: string;
   accessTokenExpires?: number;
+}
+
+const isValidToken = async (token:string):Promise<boolean> =>{
+  try {
+    await jwtVerify(token, new TextEncoder().encode(process.env.JWT_SECRET));
+    return true;
+  } catch (error: any) {
+    console.error("[ERROR] ", error.message);
+    return false;
+  }
 }
 async function refreshAccessToken(token: Token) {
   const response = await fetch("http://localhost:3000/api/auth/refresh", {

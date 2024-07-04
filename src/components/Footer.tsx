@@ -3,7 +3,7 @@ import Link from "next/link";
 
 const Footer: FC = () => {
   return (
-    <footer className="px-36 py-24 absolute bottom-0 w-full bg-secondary">
+    <footer className="px-36 py-24 absolute bottom-0 w-full bg-secondary z-[-100]">
       <p className="text-gray-500">&copy; 2021 O'Sushi. All rights reserved.</p>
       <Link
         href="/login"
