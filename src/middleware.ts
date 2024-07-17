@@ -5,7 +5,6 @@ import { jwtVerify } from "jose";
 export async function middleware(req: NextRequest) {
   console.log("Middleware executed");
 
-  // const token = await getToken({ req, secret: process.env.JWT_SECRET });
   const { pathname } = req.nextUrl;
   const token = req.cookies.get("token")?.value;
   const validToken = token ? await isValidToken(token) : null;
@@ -17,13 +16,12 @@ export async function middleware(req: NextRequest) {
     "/login",
     "/home",
   ];
+
   const isPublicPath = publicPaths.some((path) => pathname.startsWith(path));
 
   if (pathname === "/") {
     return NextResponse.redirect(new URL("/home", req.url));
   }
-
-
 
   if(pathname === "/login" && validToken){
     return NextResponse.redirect(new URL("/protected/main", req.url));
