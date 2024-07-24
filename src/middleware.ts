@@ -28,13 +28,14 @@ export async function middleware(req: NextRequest) {
   }
 
   if (pathname.startsWith("/protected")) {
-
     console.log("/protected middleware executed");
-
     if (!validToken) {
       return NextResponse.redirect(new URL("/login", req.url));
     }
     else{
+      if (pathname === "/protected"){
+        return NextResponse.redirect(new URL("/protected/main", req.url));
+      }
       return NextResponse.next();
     }
 
