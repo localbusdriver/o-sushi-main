@@ -13,10 +13,19 @@ import {
 
 export default function DoubleOrders({ results }: { results: Doubles | null }) {
   return (
-    <div className="mt-8 text-right ">
+    <div className="mt-8">
+      <h1></h1>
       <Table className=" border border-black mx-auto">
         <TableCaption>Double Orders</TableCaption>
         <TableHeader>
+          <TableRow>
+            <TableCell
+              colSpan={5}
+              className="text-primary font-bold text-center"
+            >
+              Double Orders
+            </TableCell>
+          </TableRow>
           <TableRow>
             <TableHead className="w-[100px]" colSpan={2}>
               Name
@@ -40,7 +49,7 @@ export default function DoubleOrders({ results }: { results: Doubles | null }) {
             ))
           ) : (
             <TableRow>
-              <TableCell>No Doubles</TableCell>
+              <TableCell colSpan={5} className="text-center text-destructive">No Doubles</TableCell>
             </TableRow>
           )}
         </TableBody>

@@ -38,30 +38,7 @@ export async function middleware(req: NextRequest) {
       }
       return NextResponse.next();
     }
-
-    
   }
-  //   if (!token && isPublicPath) {
-  //     return NextResponse.next();
-  //   }
-
-  //   if (!token) {
-  //     console.log("No token found, redirecting to sign in page");
-  //     return NextResponse.redirect(new URL("/login", req.url));
-  //   }
-
-  //   const expired = token.accessTokenExpires && Date.now() >= token.accessTokenExpires * 1000;
-
-  //   if (!isPublicPath && (expired || !token.accessTokenExpires)) {
-  //     console.log("Token expired, redirecting to login page");
-  //     return NextResponse.redirect(new URL("/login", req.url));
-  //   }
-
-  //   if (token && (isPublicPath || pathname === "/")) {
-  //     console.log("Public Path found, redirecting to dashboard");
-  //     return NextResponse.redirect(new URL("/dashboard", req.url));
-  //   }
-
   console.log("Token found, proceeding to next response");
   return NextResponse.next();
 }
@@ -85,25 +62,4 @@ const isValidToken = async (token:string):Promise<boolean> =>{
     console.error("[ERROR] ", error.message);
     return false;
   }
-}
-async function refreshAccessToken(token: Token) {
-  const response = await fetch("http://localhost:3000/api/auth/refresh", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      refreshToken: token.refreshToken,
-      clientId: process.env.SPOTIFY_CLIENT_ID,
-      clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
-    }),
-  });
-
-  if (!response.ok) {
-    console.log("Failed to refresh token");
-    return null;
-  }
-
-  const data = await response.json();
-  return data;
 }

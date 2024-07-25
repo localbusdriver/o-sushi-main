@@ -132,8 +132,9 @@ const Page: FC = () => {
           </Button>
         </div>
       </div>
-      <div className="flex flex-row justify-between">
+      <div className="flex flex-row justify-between gap-4">
         <SummaryTable results={summary} />
+
         <DoubleOrders results={doubles} />
       </div>
     </section>

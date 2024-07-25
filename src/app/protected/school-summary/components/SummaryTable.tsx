@@ -12,10 +12,15 @@ import type { Summary } from "../types";
 
 const SummaryTable = ({ results }: { results: Summary | null }) => {
   return (
-    <div className="mt-8 text-left">
+    <div className="mt-8 ">
       <Table className="w-96 border border-black mx-auto">
         <TableCaption>Report Summary</TableCaption>
         <TableHeader>
+          <TableRow>
+            <TableCell colSpan={4} className="text-primary font-bold text-center">
+              Order Summary
+            </TableCell>
+          </TableRow>
           <TableRow>
             <TableHead className="w-[100px]" colSpan={2}>
               Item
@@ -39,7 +44,7 @@ const SummaryTable = ({ results }: { results: Summary | null }) => {
             )
           ) : (
             <TableRow>
-              <TableCell colSpan={3} className="">
+              <TableCell colSpan={5} className="text-center text-destructive">
                 No Summary
               </TableCell>
             </TableRow>
