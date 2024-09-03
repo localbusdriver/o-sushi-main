@@ -15,3 +15,8 @@ export interface Summary {
   [key: string]: { pieces: number; rolls: number };
   Total: { pieces: number; rolls: number };
 }
+
+export type Info = {
+  date: string;
+  totalPrice: number;
+};

@@ -1,7 +1,7 @@
-import ProtectedNav from "./components/ProtectedNav";
+import ProtectedNav from "../components/ProtectedNav";
 
 export const metadata = {
-  title: "Admin"
+  title: "School-Summary"
 }
 
 function Layout({ children }: { children: React.ReactNode }) {

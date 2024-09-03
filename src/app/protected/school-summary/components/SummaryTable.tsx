@@ -32,7 +32,7 @@ const SummaryTable = ({ results }: { results: Summary | null }) => {
         <TableBody>
           {results ? (
             Object.entries(results).map(([item, obj]) =>
-              item !== "Total Rolls" && item !== "Total Pieces" ? (
+              item !== "Total" ? (
                 <TableRow key={item}>
                   <TableCell className="font-medium" colSpan={2}>
                     {item}
@@ -56,10 +56,10 @@ const SummaryTable = ({ results }: { results: Summary | null }) => {
             <TableRow>
               <TableCell colSpan={2}>Total</TableCell>
               <TableCell className="text-right">
-                {results["Total"]?.rolls}
+                {results.Total?.rolls}
               </TableCell>
               <TableCell className="text-right">
-                {results["Total"]?.pieces}
+                {results.Total?.pieces}
               </TableCell>
             </TableRow>
           )}

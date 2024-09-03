@@ -1,9 +1,16 @@
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+
 const Page = () => {
-    return (
-        <div>
-        <h1>Page</h1>
-        </div>
-    );
-}
+  return (
+    <div>
+      <Link href="/protected/school-summary">
+        <Button>
+            School Summary
+        </Button>
+      </Link>
+    </div>
+  );
+};
 
 export default Page;

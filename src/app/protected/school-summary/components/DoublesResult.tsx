@@ -14,8 +14,7 @@ import {
 export default function DoubleOrders({ results }: { results: Doubles | null }) {
   return (
     <div className="mt-8">
-      <h1></h1>
-      <Table className=" border border-black mx-auto">
+      <Table className=" border border-black mx-auto w-[500px]">
         <TableCaption>Double Orders</TableCaption>
         <TableHeader>
           <TableRow>
@@ -30,9 +29,9 @@ export default function DoubleOrders({ results }: { results: Doubles | null }) {
             <TableHead className="w-[100px]" colSpan={2}>
               Name
             </TableHead>
-            <TableHead className="text-right">Item</TableHead>
-            <TableHead className="text-right">Quantity</TableHead>
-            <TableHead className="text-right">Organization</TableHead>
+            <TableHead className="text-left">Item</TableHead>
+            <TableHead className="text-left">Quantity</TableHead>
+            <TableHead className="text-left">Organization</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -42,9 +41,9 @@ export default function DoubleOrders({ results }: { results: Doubles | null }) {
                 <TableCell className="font-medium" colSpan={2}>
                   {value.member}
                 </TableCell>
-                <TableCell className="">{value.item}</TableCell>
-                <TableCell className="">{value.quantity}</TableCell>
-                <TableCell className="">{value.organization}</TableCell>
+                <TableCell className="text-left">{value.item}</TableCell>
+                <TableCell className="text-left">{value.quantity}</TableCell>
+                <TableCell className="text-left">{value.organization}</TableCell>
               </TableRow>
             ))
           ) : (
