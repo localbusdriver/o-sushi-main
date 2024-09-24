@@ -1,4 +1,5 @@
 "use client";
+import { PaymentDetailsType, BillingInfoType, TotalType } from "../types/type";
 import { Download } from "lucide-react";
 import html2canvas from "html2canvas";
 // import { jsPDF } from "jspdf";
@@ -30,51 +31,39 @@ import { Button } from "@/components/ui/button";
 // };
 
 type InvoiceModalProps = {
-  showModal: boolean;
-  closeModal: () => void;
-  info: {
-    billFrom: string;
-    billFromAddress: string;
-    billFromEmail: string;
-    billTo: string;
-    billToAddress: string;
-    billToEmail: string;
-    dateOfIssue: string;
-    invoiceNumber: number;
-    notes: string;
-  };
-  currency: string;
-  total: string;
+  billingInfo: BillingInfoType;
+  modifiers: PaymentDetailsType;
+  final: TotalType;
   items: any[];
-  taxAmount: string;
-  discountAmount: string;
-  subTotal: string;
 };
 
 const InvoiceModal = ({
-  showModal,
-  closeModal,
-  info,
-  currency,
-  total,
+  billingInfo,
+  modifiers,
   items,
-  taxAmount,
-  discountAmount,
-  subTotal,
+  final,
 }: InvoiceModalProps) => {
+  const { currency, invoiceNumber, dateOfIssue, notes } = modifiers;
+  const {
+    billFrom,
+    billFromAddress,
+    billFromEmail,
+    billTo,
+    billToAddress,
+    billToEmail,
+  } = billingInfo;
+  const { total, subTotal, taxAmount, discountAmount } = final;
+
   return (
-    <div id="Invoice-Modal">
-      <div>
-        {" "}
-        {/*Modal*/}
+    <Dialog>
+      <DialogTrigger className="border px-3 py-2 rounded hover:bg-primary-foreground hover:border-accent transition">Finalise</DialogTrigger>
+      <DialogContent>
         <div id="invoiceCapture">
           <div className="flex flex-row justify-between items-start bg-white/[0.5] w-100 p-4">
             <div className="w-100">
-              <h4 className="font-bold my-2">
-                {info.billFrom || "Mikyung Wee"}
-              </h4>
+              <h4 className="font-bold my-2">{billFrom || "Mikyung Wee"}</h4>
               <h6 className="font-bold text-secondary mb-1">
-                Invoice Number: {info.invoiceNumber || ""}
+                Invoice Number: {invoiceNumber || ""}
               </h6>
             </div>
             <div className="text-end ms-4">
@@ -89,19 +78,19 @@ const InvoiceModal = ({
             <div className="flex flex-row mb-4">
               <div className="flex flex-col">
                 <div className="font-bold">Billed From:</div>
-                <div>{info.billFrom || ""}</div>
-                <div>{info.billFromAddress || ""}</div>
-                <div>{info.billFromEmail || ""}</div>
+                <div>{billFrom || ""}</div>
+                <div>{billFromAddress || ""}</div>
+                <div>{billFromEmail || ""}</div>
               </div>
               <div className="flex flex-col">
                 <div className="font-bold">Billed to:</div>
-                <div>{info.billTo || ""}</div>
-                <div>{info.billToAddress || ""}</div>
-                <div>{info.billToEmail || ""}</div>
+                <div>{billTo || ""}</div>
+                <div>{billToAddress || ""}</div>
+                <div>{billToEmail || ""}</div>
               </div>
               <div className="flex flex-col">
                 <div className="font-bold mt-2">Date Of Issue:</div>
-                <div>{info.dateOfIssue || ""}</div>
+                <div>{dateOfIssue || ""}</div>
               </div>
             </div>
             <table className="mb-0">
@@ -148,7 +137,7 @@ const InvoiceModal = ({
                     {currency} {subTotal}
                   </td>
                 </tr>
-                {parseFloat(taxAmount) != 0.0 && (
+                {taxAmount != 0.0 && (
                   <tr className="text-end">
                     <td></td>
                     <td className="font-bold" style={{ width: "100px" }}>
@@ -159,7 +148,7 @@ const InvoiceModal = ({
                     </td>
                   </tr>
                 )}
-                {parseFloat(discountAmount) != 0.0 && (
+                {discountAmount != 0.0 && (
                   <tr className="text-end">
                     <td></td>
                     <td className="font-bold" style={{ width: "100px" }}>
@@ -181,10 +170,8 @@ const InvoiceModal = ({
                 </tr>
               </tbody>
             </table>
-            {info.notes && (
-              <div className="bg-white/[0.5] py-3 px-4 rounded">
-                {info.notes}
-              </div>
+            {notes && (
+              <div className="bg-white/[0.5] py-3 px-4 rounded">{notes}</div>
             )}
           </div>
         </div>
@@ -206,8 +193,8 @@ const InvoiceModal = ({
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 

@@ -22,10 +22,7 @@ const EditableField = ({
     <div id="Editable-Field" className="my-1 flex-nowrap">
       {cellData.leading != null && (
         <div className="bg-white/[0.5] font-bold border-0 text-secondary px-2">
-          <span
-            className="border-2 border-secondary rounded-full flex items-center justify-center w-[20px] h-[20px]"
-            style={{ width: "20px", height: "20px" }}
-          >
+          <span className="border-2 border-secondary rounded-full flex items-center justify-center w-[20px] h-[20px]">
             {cellData.leading}
           </span>
         </div>

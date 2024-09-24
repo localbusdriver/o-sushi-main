@@ -1,9 +1,36 @@
 "use client";
+import { navLinks } from "../data/ProtectedNavData";
+
+import { useState } from "react";
 import Link from "next/link";
+import {
+  motion,
+  AnimatePresence,
+  useScroll,
+  useMotionValueEvent,
+} from "framer-motion";
+
 import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
 
 const ProtectedNav = () => {
+  const scrollYProgress = useScroll().scrollYProgress;
+  const [visible, setVisible] = useState(true);
+
+  useMotionValueEvent(scrollYProgress, "change", (current) => {
+    if (typeof current === "number") {
+      let direction = current! - scrollYProgress.getPrevious()!;
+      if (scrollYProgress.get() < 0.05) {
+        setVisible(true);
+      } else {
+        if (direction < 0) {
+          setVisible(true);
+        } else {
+          setVisible(false);
+        }
+      }
+    }
+  });
+
   const handleSignOut = async () => {
     try {
       const response = await fetch("/api/auth/logout", {
@@ -22,18 +49,42 @@ const ProtectedNav = () => {
       console.error("Error during logout:", error);
     }
   };
+
   return (
-    <nav className="fixed left-[50%] top-8 flex w-fit -translate-x-[50%] items-center gap-6 rounded-lg border-[1px] border-neutral-200 bg-neutral-100 bg-opacity-20 p-2 text-sm text-neutral-500">
-      <Link href="/protected/main">
-        <Logo />
-      </Link>
-      <NavLink url="/protected/school-summary">School</NavLink>
-      {/* <NavLink url="/protected/school-summary/summary">School Summary</NavLink>
-      <NavLink url="/protected/school-summary/doubles">Double orders</NavLink> */}
-      <Button variant="ghost" onClick={handleSignOut}>
-        Exit
-      </Button>
-    </nav>
+    <AnimatePresence mode="wait">
+      <motion.nav
+        initial={{
+          opacity: 1,
+          y: -100,
+        }}
+        animate={{
+          y: visible ? 0 : -100,
+          opacity: visible ? 1 : 0,
+        }}
+        transition={{
+          duration: 0.2,
+        }}
+        className="flex max-w-fit md:min-w-[70vw] gap-1 lg:min-w-fit fixed z-[5000] top-10 inset-x-0 mx-auto px-6 py-4 rounded-lg border border-black/.1 shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)] items-center justify-center space-x-2 text-sm"
+        style={{
+          backdropFilter: "blur(16px) saturate(180%)",
+          backgroundColor: "rgba(255, 255, 255, 0.125)",
+          borderRadius: "12px",
+          border: "1px solid rgba(255, 255, 255, 0.125)",
+        }}
+      >
+        <Link href="/protected/main">
+          <Logo />
+        </Link>
+        {navLinks.map((link) => (
+          <NavLink key={link.id} url={link.url}>
+            {link.name}
+          </NavLink>
+        ))}
+        <NavLink onClick={handleSignOut}>
+          Exit
+        </NavLink>
+      </motion.nav>
+    </AnimatePresence>
   );
 };
 
@@ -61,12 +112,14 @@ const Logo = () => {
 const NavLink = ({
   url,
   children,
+  onClick,
 }: {
-  url: string;
+  url?: string;
   children: React.ReactNode;
+  onClick?: () => void;
 }) => {
   return (
-    <Link href={url} rel="nofollow" className="block overflow-hidden">
+    <Link href={url || ""} rel="nofollow" className="block overflow-hidden" onClick={onClick}>
       <motion.div
         whileHover={{ y: -20 }}
         transition={{ ease: "backInOut", duration: 0.5 }}

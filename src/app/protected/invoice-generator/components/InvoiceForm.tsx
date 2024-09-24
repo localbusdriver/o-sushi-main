@@ -1,4 +1,14 @@
 "use client";
+import {
+  BillingInfoType,
+  Item,
+  PaymentDetailsType,
+  TotalType,
+} from "../types/type";
+
+import InvoiceItem from "./InvoiceItem";
+import InvoiceModal from "./InvoiceModal";
+
 import React, { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -18,37 +28,35 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import InvoiceItem from "./InvoiceItem";
-import InvoiceModal from "./InvoiceModal";
-
-import { item } from "../types/type";
 import { Textarea } from "@/components/ui/textarea";
 
-const InvoiceForm = () => {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [currency, setCurrency] = useState<string>("$");
-  const [currentDate, setCurrentDate] = useState<string>(
-    new Date().toLocaleDateString()
-  );
-  const [invoiceNumber, setInvoiceNumber] = useState<number>(1);
-  const [dateOfIssue, setDateOfIssue] = useState<string>("");
-  const [billTo, setBillTo] = useState<string>("");
-  const [billToEmail, setBillToEmail] = useState<string>("");
-  const [billToAddress, setBillToAddress] = useState<string>("");
-  const [billFrom, setBillFrom] = useState<string>("");
-  const [billFromEmail, setBillFromEmail] = useState<string>("");
-  const [billFromAddress, setBillFromAddress] = useState<string>("");
-  const [notes, setNotes] = useState<string>(
-    "Thank you for doing business with us. Have a great day!"
-  );
-  const [total, setTotal] = useState<string>("0.00");
-  const [subTotal, setSubTotal] = useState<string>("0.00");
-  const [taxRate, setTaxRate] = useState<string>("0.00");
-  const [taxAmount, setTaxAmount] = useState<string>("0.00");
-  const [discountRate, setDiscountRate] = useState<string>("0.00");
-  const [discountAmount, setDiscountAmount] = useState<string>("0.00");
+const InvoiceForm = ({ currentDate }: { currentDate?: string }) => {
+  const [modifiers, setModifiers] = useState<PaymentDetailsType>({
+    currency: "$",
+    invoiceNumber: 1,
+    dateOfIssue: "",
+    notes: "",
+  });
 
-  const [items, setItems] = useState<item[]>([
+  const [billingInfo, setBillingInfo] = useState<BillingInfoType>({
+    billTo: "",
+    billToEmail: "",
+    billToAddress: "",
+    billFrom: "",
+    billFromEmail: "",
+    billFromAddress: "",
+  });
+
+  const [final, setFinal] = useState<TotalType>({
+    total: 0,
+    subTotal: 0,
+    taxRate: 0,
+    taxAmount: 0,
+    discountRate: 0,
+    discountAmount: 0,
+  });
+
+  const [items, setItems] = useState<Item[]>([
     {
       id: (+new Date() + Math.floor(Math.random() * 999999)).toString(36),
       name: "",
@@ -63,22 +71,24 @@ const InvoiceForm = () => {
       return acc + parseFloat(item.price) * item.quantity;
     }, 0);
 
-    let newtaxAmount: number = newSubTotal * (parseFloat(taxRate) / 100);
-    let newdiscountAmount: number =
-      newSubTotal * (parseFloat(discountRate) / 100);
+    let newtaxAmount: number = newSubTotal * (final.taxRate / 100);
+    let newdiscountAmount: number = newSubTotal * (final.discountRate / 100);
     let newTotal: number = newSubTotal - newdiscountAmount + newtaxAmount;
 
-    setSubTotal(newSubTotal.toString());
-    setTaxAmount(newtaxAmount.toString());
-    setDiscountAmount(newdiscountAmount.toString());
-    setTotal(newTotal.toString());
-  }, [items, taxRate, discountRate]);
+    setFinal(() => ({
+      ...final,
+      subTotal: newSubTotal,
+      taxAmount: newtaxAmount,
+      discountAmount: newdiscountAmount,
+      total: newTotal,
+    }));
+  }, [items, final.taxRate, final.discountRate]);
 
   useEffect(() => {
     handleCalculateTotal();
   }, [handleCalculateTotal]);
 
-  const handleRowDel = (item: item) => {
+  const handleRowDel = (item: Item) => {
     const updatedItems = items.filter((i) => i.id !== item.id);
     setItems(updatedItems);
   };
@@ -106,93 +116,102 @@ const InvoiceForm = () => {
     setItems(updatedItems);
   };
 
-  const handleChange =
-    (setter: React.Dispatch<React.SetStateAction<any>>) =>
-    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      setter(event.target.value);
-      handleCalculateTotal();
-    };
-
-  const openModal = (event: React.ChangeEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    handleCalculateTotal();
-    setIsOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsOpen(false);
-  };
-
+  //  onSubmit={openModal}
   return (
-    <form id="Invoice-Form" onSubmit={openModal}>
+    <form id="Invoice-Form">
       <div className="flex flex-row gap-12">
-        <div className="flex flex-col">
-          <Card className="p-4 p-xl-5 my-3 my-xl-4">
-            <div className="flex flex-row items-start justify-between mb-3">
+        <Card className="flex flex-col xl:p-5 my-3 xl:my-4">
+          <CardHeader className="flex flex-row items-start justify-between">
+            <div className="flex flex-col">
               <div className="flex flex-col">
-                <div className="flex flex-col">
-                  <div className="mb-2">
-                    <span className="font-bold">Current&nbsp;Date:&nbsp;</span>
-                    <span className="">{currentDate}</span>
-                  </div>
-                </div>
-                <div className="flex flex-row items-center">
-                  <span className="font-bold block me-2">Due&nbsp;Date:</span>
-                  <Input
-                    type="date"
-                    value={dateOfIssue}
-                    name="dateOfIssue"
-                    onChange={handleChange(setDateOfIssue)}
-                    className="max-w-[150px]"
-                    required
-                  />
+                <div className="mb-2">
+                  <span className="font-bold">Current&nbsp;Date:&nbsp;</span>
+                  <span className="">{currentDate}</span>
                 </div>
               </div>
               <div className="flex flex-row items-center">
-                <span className="font-bold me-2">Invoice&nbsp;Number:&nbsp;</span>
+                <span className="font-bold block me-2">Due&nbsp;Date:</span>
                 <Input
-                  type="number"
-                  value={invoiceNumber}
-                  name="invoiceNumber"
-                  onChange={handleChange(setInvoiceNumber)}
-                  min="1"
-                  style={{ maxWidth: "70px" }}
+                  type="date"
+                  value={modifiers.dateOfIssue}
+                  name="dateOfIssue"
+                  onChange={(e) =>
+                    setModifiers(() => ({
+                      ...modifiers,
+                      dateOfIssue: e.target.value,
+                    }))
+                  }
+                  className="max-w-[150px]"
                   required
                 />
               </div>
             </div>
-            <hr className="my-4" />
-            <div className="mb-5 flex flex-row">
+            <div className="flex flex-row items-center">
+              <span className="font-bold me-2">Invoice&nbsp;Number:&nbsp;</span>
+              <Input
+                type="number"
+                value={modifiers.invoiceNumber}
+                name="invoiceNumber"
+                onChange={(e) => {
+                  setModifiers(() => ({
+                    ...modifiers,
+                    invoiceNumber: parseInt(e.target.value),
+                  }));
+                }}
+                min="1"
+                style={{ maxWidth: "70px" }}
+                required
+              />
+            </div>
+          </CardHeader>
+          <hr className="mb-6" />
+          <CardContent>
+            <div className="mb-5 flex flex-row gap-2">
               <div className="flex flex-col">
                 <Label className="font-bold">Bill from:</Label>
                 <Input
                   placeholder="Who is this invoice from?"
-                  value={billFrom}
+                  value={billingInfo.billFrom}
                   type="text"
                   name="billFrom"
                   className="my-2"
-                  onChange={handleChange(setBillFrom)}
+                  onChange={(e) =>
+                    setBillingInfo({
+                      ...billingInfo,
+                      billFrom: e.target.value,
+                    })
+                  }
                   autoComplete="name"
                   required
                 />
                 <Input
                   placeholder="Email address"
-                  value={billFromEmail}
+                  value={billingInfo.billFromEmail}
                   type="email"
                   name="billFromEmail"
                   className="my-2"
-                  onChange={handleChange(setBillFromEmail)}
+                  onChange={(e) =>
+                    setBillingInfo(() => ({
+                      ...billingInfo,
+                      billFromEmail: e.target.value,
+                    }))
+                  }
                   autoComplete="email"
                   required
                 />
                 <Input
                   placeholder="Billing address"
-                  value={billFromAddress}
+                  value={billingInfo.billFromAddress}
                   type="text"
                   name="billFromAddress"
                   className="my-2"
                   autoComplete="address"
-                  onChange={handleChange(setBillFromAddress)}
+                  onChange={(e) =>
+                    setBillingInfo(() => ({
+                      ...billingInfo,
+                      billFromAddress: e.target.value,
+                    }))
+                  }
                   required
                 />
               </div>
@@ -200,32 +219,44 @@ const InvoiceForm = () => {
                 <Label className="font-bold">Bill to:</Label>
                 <Input
                   placeholder="Who is this invoice to?"
-                  value={billTo}
+                  value={billingInfo.billTo}
                   type="text"
                   name="billTo"
                   className="my-2"
-                  onChange={handleChange(setBillTo)}
+                  onChange={(e) =>
+                    setBillingInfo({ ...billingInfo, billTo: e.target.value })
+                  }
                   autoComplete="name"
                   required
                 />
                 <Input
                   placeholder="Email address"
-                  value={billToEmail}
+                  value={billingInfo.billToEmail}
                   type="email"
                   name="billToEmail"
                   className="my-2"
-                  onChange={handleChange(setBillToEmail)}
+                  onChange={(e) =>
+                    setBillingInfo({
+                      ...billingInfo,
+                      billToEmail: e.target.value,
+                    })
+                  }
                   autoComplete="email"
                   required
                 />
                 <Input
                   placeholder="Billing address"
-                  value={billToAddress}
+                  value={billingInfo.billToAddress}
                   type="text"
                   name="billToAddress"
                   className="my-2"
                   autoComplete="address"
-                  onChange={handleChange(setBillToAddress)}
+                  onChange={(e) =>
+                    setBillingInfo({
+                      ...billingInfo,
+                      billToAddress: e.target.value,
+                    })
+                  }
                   required
                 />
               </div>
@@ -234,43 +265,44 @@ const InvoiceForm = () => {
               onItemizedItemEdit={onItemizedItemEdit}
               onRowAdd={handleAddEvent}
               onRowDel={handleRowDel}
-              currency={currency}
+              currency={modifiers.currency}
               items={items}
             />
             <div className="flex flex-row mt-4 justify-end">
-              <div className="flex flex-col">
+              <div className="flex flex-col space-y-2">
                 <div className="flex flex-row items-start justify-between">
-                  <span className="font-bold">Subtotal:</span>
+                  <span className="font-bold">Subtotal:</span>&nbsp;
                   <span>
-                    {currency}
-                    {subTotal}
+                    {modifiers.currency}
+                    {final.subTotal}
                   </span>
                 </div>
-                <div className="flex flex-row items-start justify-between mt-2">
-                  <span className="font-bold">Discount:</span>
+                <div className="flex flex-row items-start justify-between ">
+                  <span className="font-bold">Discount:</span>&nbsp;
                   <span>
-                    <span className="text-small ">({discountRate || 0}%)</span>
-                    {currency}
-                    {discountAmount || 0}
+                    <span className="text-small ">
+                      ({final.discountRate || 0}%)
+                    </span>
+                    &nbsp;
+                    {modifiers.currency}
+                    {final.discountAmount || 0}
                   </span>
                 </div>
-                <div className="flex flex-row items-start justify-between mt-2">
-                  <span className="font-bold">Tax:</span>
+                <div className="flex flex-row items-start justify-between ">
+                  <span className="font-bold">Tax:</span>&nbsp;
                   <span>
-                    <span className="text-small ">({taxRate || 0}%)</span>
-                    {currency}
-                    {taxAmount || 0}
+                    <span className="text-small ">({final.taxRate || 0}%)</span>
+                    &nbsp;
+                    {modifiers.currency}
+                    {final.taxAmount || 0}
                   </span>
                 </div>
                 <hr />
-                <div
-                  className="flex flex-row items-start justify-between"
-                  style={{ fontSize: "1.125rem" }}
-                >
-                  <span className="font-bold">Total:</span>
+                <div className="flex flex-row items-start justify-between text-[1.125rem]">
+                  <span className="font-bold">Total:</span>&nbsp;
                   <span className="font-bold">
-                    {currency}
-                    {total || 0}
+                    {modifiers.currency}
+                    {final.total || 0}
                   </span>
                 </div>
               </div>
@@ -280,111 +312,104 @@ const InvoiceForm = () => {
             <Textarea
               placeholder="Thank you for doing business with us. Have a great day!"
               name="notes"
-              value={notes}
-              onChange={handleChange(setNotes)}
+              value={modifiers.notes}
+              onChange={(e) =>
+                setModifiers({ ...modifiers, notes: e.target.value })
+              }
               className="my-2"
               rows={1}
             />
-          </Card>
-        </div>
-        <div className="flex flex-col">
-          <div className="sticky pt-3 pt-xl-4">
+          </CardContent>
+        </Card>
+        <Card className="flex flex-col max-h-[343px]">
+          <CardHeader className="sticky pt-3 xl:pt-4">
             <InvoiceModal
-              showModal={isOpen}
-              closeModal={closeModal}
-              info={{
-                dateOfIssue,
-                invoiceNumber,
-                billTo,
-                billToEmail,
-                billToAddress,
-                billFrom,
-                billFromEmail,
-                billFromAddress,
-                notes,
-              }}
+              billingInfo={billingInfo}
+              modifiers={modifiers}
               items={items}
-              currency={currency}
-              subTotal={subTotal}
-              taxAmount={taxAmount}
-              discountAmount={discountAmount}
-              total={total}
+              final={final}
             />
-
+          </CardHeader>
+          <CardContent>
             <div className="mb-3">
               <Label className="font-bold">Currency:</Label>
               <Select
-                onValueChange={(value: string) => {
-                  setCurrency(value);
+                onValueChange={(val) => {
+                  setModifiers(() => ({ ...modifiers, currency: val }));
                 }}
+                value={modifiers.currency}
                 aria-label="Change Currency"
               >
                 <SelectTrigger>Change Currency</SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="$">NZD (New Zealand Dollar)</SelectItem>
                   <SelectItem value="$">USD (United States Dollar)</SelectItem>
                   <SelectItem value="£">
                     GBP (British Pound Sterling)
                   </SelectItem>
-                  <SelectItem value="₹">INR (Indian Rupee)</SelectItem>
                   <SelectItem value="¥">JPY (Japanese Yen)</SelectItem>
                   <SelectItem value="$">CAD (Canadian Dollar)</SelectItem>
                   <SelectItem value="$">AUD (Australian Dollar)</SelectItem>
-                  <SelectItem value="$">SGD (Singapore Dollar)</SelectItem>
-                  <SelectItem value="¥">CNY (Chinese Renminbi)</SelectItem>
-                  <SelectItem value="₿">BTC (Bitcoin)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-            <div className="my-3">
-              <Label className="font-bold">Tax rate:</Label>
-              <div className="my-1 flex flex-nowrap">
-                <Input
-                  name="taxRate"
-                  type="number"
-                  value={taxRate}
-                  onChange={handleChange(setTaxRate)}
-                  className="bg-white/[0.5] border"
-                  placeholder="0.0"
-                  min="0.00"
-                  step="0.01"
-                  max="100.00"
-                />
-                <Input
-                  className="bg-white/[0.5] font-bold text-secondary text-sm"
-                  placeholder={"%"}
-                />
+            <div className="flex my-3 gap-8">
+              <div className="">
+                <Label className="font-bold">Tax rate:</Label>
+                <div className="my-1 flex items-center justify center flex-nowrap max-w-max">
+                  <Input
+                    name="taxRate"
+                    type="number"
+                    value={final.taxRate}
+                    onChange={(e) => {
+                      setFinal({ ...final, taxRate: +e.target.value });
+                      handleCalculateTotal();
+                    }}
+                    className="bg-white/[0.5] border rounded-r-none"
+                    placeholder="0.0"
+                    min="0.00"
+                    step="0.01"
+                    max="100.00"
+                  />
+                  <Label className="bg-white/[0.5] font-bold border h-10 px-3 py-2 flex items-center rounded border-l-0 rounded-l-none">
+                    %
+                  </Label>
+                </div>
+              </div>
+              <div>
+                <Label className="font-bold">Discount rate:</Label>
+                <div className="my-1 flex items-center justify center flex-nowrap max-w-max">
+                  <Input
+                    name="discountRate"
+                    id="discountRate"
+                    type="number"
+                    value={final.discountRate}
+                    onChange={(e) => {
+                      setFinal({ ...final, discountRate: +e.target.value });
+                      handleCalculateTotal();
+                    }}
+                    className="bg-white/[0.5] border rounded-r-none"
+                    placeholder="0.0"
+                    min="0.00"
+                    step="0.01"
+                    max="100.00"
+                  />
+                  <Label
+                    htmlFor="discountRate"
+                    className="bg-white/[0.5] font-bold border h-10 px-3 py-2 flex items-center rounded border-l-0 rounded-l-none"
+                  >
+                    %
+                  </Label>
+                </div>
               </div>
             </div>
-            <div className="my-3">
-              <Label className="font-bold">Discount rate:</Label>
-              <div className="my-1 flex-nowrap">
-                <Input
-                  name="discountRate"
-                  type="number"
-                  value={discountRate}
-                  onChange={handleChange(setDiscountRate)}
-                  className="bg-white/[0.5] border"
-                  placeholder="0.0"
-                  min="0.00"
-                  step="0.01"
-                  max="100.00"
-                />
-                <Input
-                  className="bg-white/[0.5] font-bold text-secondary text-small"
-                  placeholder="%"
-                />
-              </div>
-            </div>
-            <hr className="mt-4 mb-3" />
-            <Button
-              variant="secondary"
-              type="submit"
-              className="block w-full"
-            >
+          </CardContent>
+          <CardFooter>
+            <Button variant="secondary" type="submit" className="block w-full">
               Review Invoice
             </Button>
-          </div>
-        </div>
+          </CardFooter>
+        </Card>
       </div>
     </form>
   );
