@@ -4,7 +4,6 @@ export type NavLinkType = {
   url: string;
 };
 export const navLinks: NavLinkType[] = [
-
   {
     id: 2,
     name: "School",

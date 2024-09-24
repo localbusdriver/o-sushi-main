@@ -1,4 +1,8 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
+const nextConfig = {
+  experimental: {
+    typedRoutes: true, // Error if linking to route that doesn't exist
+  },
+};
 
 export default nextConfig;

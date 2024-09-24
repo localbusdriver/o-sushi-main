@@ -1,7 +1,9 @@
 "use client";
-import { PaymentDetailsType, BillingInfoType, TotalType } from "../types/type";
-import { Download } from "lucide-react";
+
 import html2canvas from "html2canvas";
+import { Download } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 // import { jsPDF } from "jspdf";
 import {
   Dialog,
@@ -11,7 +13,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import {
+  BillingInfoType,
+  PaymentDetailsType,
+  TotalType,
+} from "@/lib/types/invoice-generator-types";
 
 // const GenerateInvoice = () => {
 //   html2canvas(document.querySelector("#invoiceCapture")).then((canvas) => {
@@ -56,18 +62,20 @@ const InvoiceModal = ({
 
   return (
     <Dialog>
-      <DialogTrigger className="border px-3 py-2 rounded hover:bg-primary-foreground hover:border-accent transition">Finalise</DialogTrigger>
+      <DialogTrigger className="rounded border px-3 py-2 transition hover:border-accent hover:bg-primary-foreground">
+        Finalise
+      </DialogTrigger>
       <DialogContent>
         <div id="invoiceCapture">
-          <div className="flex flex-row justify-between items-start bg-white/[0.5] w-100 p-4">
+          <div className="w-100 flex flex-row items-start justify-between bg-white/[0.5] p-4">
             <div className="w-100">
-              <h4 className="font-bold my-2">{billFrom || "Mikyung Wee"}</h4>
-              <h6 className="font-bold text-secondary mb-1">
+              <h4 className="my-2 font-bold">{billFrom || "Mikyung Wee"}</h4>
+              <h6 className="mb-1 font-bold text-secondary">
                 Invoice Number: {invoiceNumber || ""}
               </h6>
             </div>
-            <div className="text-end ms-4">
-              <h6 className="font-bold mt-1 mb-2">Amount&nbsp;Due:</h6>
+            <div className="ms-4 text-end">
+              <h6 className="mb-2 mt-1 font-bold">Amount&nbsp;Due:</h6>
               <h5 className="font-bold text-secondary">
                 {" "}
                 {currency} {total}
@@ -75,7 +83,7 @@ const InvoiceModal = ({
             </div>
           </div>
           <div className="p-4">
-            <div className="flex flex-row mb-4">
+            <div className="mb-4 flex flex-row">
               <div className="flex flex-col">
                 <div className="font-bold">Billed From:</div>
                 <div>{billFrom || ""}</div>
@@ -89,7 +97,7 @@ const InvoiceModal = ({
                 <div>{billToEmail || ""}</div>
               </div>
               <div className="flex flex-col">
-                <div className="font-bold mt-2">Date Of Issue:</div>
+                <div className="mt-2 font-bold">Date Of Issue:</div>
                 <div>{dateOfIssue || ""}</div>
               </div>
             </div>
@@ -171,17 +179,17 @@ const InvoiceModal = ({
               </tbody>
             </table>
             {notes && (
-              <div className="bg-white/[0.5] py-3 px-4 rounded">{notes}</div>
+              <div className="rounded bg-white/[0.5] px-4 py-3">{notes}</div>
             )}
           </div>
         </div>
-        <div className="pb-4 px-4">
+        <div className="px-4 pb-4">
           <div className="flex flex-row">
             <div className="flex flex-col"></div>
             <div className="flex flex-col">
               <Button
                 variant="outline"
-                className="flex flex-row items-center justify-center mt-3 md:mt-0 max-w-max "
+                className="mt-3 flex max-w-max flex-row items-center justify-center md:mt-0"
                 // onClick={GenerateInvoice}
               >
                 <Download

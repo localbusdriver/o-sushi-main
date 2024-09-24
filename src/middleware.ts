@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { NextRequest } from "next/server";
+
 import { jwtVerify } from "jose";
 
 export async function middleware(req: NextRequest) {
@@ -23,7 +24,7 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/home", req.url));
   }
 
-  if(pathname === "/login" && validToken){
+  if (pathname === "/login" && validToken) {
     return NextResponse.redirect(new URL("/protected/main", req.url));
   }
 
@@ -31,9 +32,8 @@ export async function middleware(req: NextRequest) {
     console.log("/protected middleware executed");
     if (!validToken) {
       return NextResponse.redirect(new URL("/login", req.url));
-    }
-    else{
-      if (pathname === "/protected"){
+    } else {
+      if (pathname === "/protected") {
         return NextResponse.redirect(new URL("/protected/main", req.url));
       }
       return NextResponse.next();
@@ -54,7 +54,7 @@ interface Token {
   accessTokenExpires?: number;
 }
 
-const isValidToken = async (token:string):Promise<boolean> =>{
+const isValidToken = async (token: string): Promise<boolean> => {
   try {
     await jwtVerify(token, new TextEncoder().encode(process.env.JWT_SECRET));
     return true;
@@ -62,4 +62,4 @@ const isValidToken = async (token:string):Promise<boolean> =>{
     console.error("[ERROR] ", error.message);
     return false;
   }
-}
+};

@@ -21,8 +21,8 @@ const EditableField = ({
   return (
     <div id="Editable-Field" className="my-1 flex-nowrap">
       {cellData.leading != null && (
-        <div className="bg-white/[0.5] font-bold border-0 text-secondary px-2">
-          <span className="border-2 border-secondary rounded-full flex items-center justify-center w-[20px] h-[20px]">
+        <div className="border-0 bg-white/[0.5] px-2 font-bold text-secondary">
+          <span className="flex h-[20px] w-[20px] items-center justify-center rounded-full border-2 border-secondary">
             {cellData.leading}
           </span>
         </div>

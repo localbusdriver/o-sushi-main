@@ -1,16 +1,16 @@
 "use client";
-import { navLinks } from "../data/ProtectedNavData";
 
-import { useState } from "react";
 import Link from "next/link";
+import { useState } from "react";
+
 import {
-  motion,
   AnimatePresence,
-  useScroll,
+  motion,
   useMotionValueEvent,
+  useScroll,
 } from "framer-motion";
 
-import { Button } from "@/components/ui/button";
+import { navLinks } from "@/lib/data/protected-nav-data";
 
 const ProtectedNav = () => {
   const scrollYProgress = useScroll().scrollYProgress;
@@ -64,7 +64,7 @@ const ProtectedNav = () => {
         transition={{
           duration: 0.2,
         }}
-        className="flex max-w-fit md:min-w-[70vw] gap-1 lg:min-w-fit fixed z-[5000] top-10 inset-x-0 mx-auto px-6 py-4 rounded-lg border border-black/.1 shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)] items-center justify-center space-x-2 text-sm"
+        className="border-black/.1 fixed inset-x-0 top-10 z-[5000] mx-auto flex max-w-fit items-center justify-center gap-1 space-x-2 rounded-lg border px-6 py-4 text-sm shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)] md:min-w-[70vw] lg:min-w-fit"
         style={{
           backdropFilter: "blur(16px) saturate(180%)",
           backgroundColor: "rgba(255, 255, 255, 0.125)",
@@ -80,9 +80,7 @@ const ProtectedNav = () => {
             {link.name}
           </NavLink>
         ))}
-        <NavLink onClick={handleSignOut}>
-          Exit
-        </NavLink>
+        <NavLink onClick={handleSignOut}>Exit</NavLink>
       </motion.nav>
     </AnimatePresence>
   );
@@ -119,14 +117,19 @@ const NavLink = ({
   onClick?: () => void;
 }) => {
   return (
-    <Link href={url || ""} rel="nofollow" className="block overflow-hidden" onClick={onClick}>
+    <Link
+      href={url || ""}
+      rel="nofollow"
+      className="block overflow-hidden"
+      onClick={onClick}
+    >
       <motion.div
         whileHover={{ y: -20 }}
         transition={{ ease: "backInOut", duration: 0.5 }}
         className="h-[20px]"
       >
         <span className="flex h-[20px] items-center">{children}</span>
-        <span className="flex h-[20px] items-center  text-primary">
+        <span className="flex h-[20px] items-center text-primary">
           {children}
         </span>
       </motion.div>

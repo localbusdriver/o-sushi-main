@@ -66,10 +66,10 @@
   }
 
   .page {
-    @apply px-36 mt-32;
+    @apply mt-32 px-36;
   }
 
   .nav-btn {
-    @apply py-8 text-primary text-xl hover:underline hover:text-blue-400;
+    @apply py-8 text-xl text-primary hover:text-blue-400 hover:underline;
   }
 }

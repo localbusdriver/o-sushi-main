@@ -1,12 +1,19 @@
 "use client";
-import React, { useState, useEffect } from "react";
+
+import React, { useEffect, useState } from "react";
 import { FC } from "react";
+
+import DoubleOrders from "@/components/school-summary-components/doubles-result";
+import SummaryTable from "@/components/school-summary-components/summary-table";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import SummaryTable from "./components/SummaryTable";
-import DoubleOrders from "./components/DoublesResult";
-import { Items, Summary, Doubles, Info } from "./types";
+import { Label } from "@/components/ui/label";
+import {
+  Doubles,
+  Info,
+  Items,
+  Summary,
+} from "@/lib/types/school-summary-types";
 
 const pricing = {};
 
@@ -138,7 +145,7 @@ const Page: FC = () => {
           <span className="text-[hsl(var(--excel-green))]">Excel</span>
           &nbsp;file&nbsp;
         </Label>
-        <div className="w-full flex flex-row justify-between items-center">
+        <div className="flex w-full flex-row items-center justify-between">
           <div className="flex flex-row gap-2">
             <Input
               type="file"
@@ -152,10 +159,12 @@ const Page: FC = () => {
             </Button>
           </div>
 
-          {info.date && <div className="p-2 bg-accent border rounded w-fit space-y-1 text-left">
-            <p>{info.date}</p>
-            <p>{info.totalPrice > 0 ? "$" + info.totalPrice : ""}</p>
-          </div>}
+          {info.date && (
+            <div className="w-fit space-y-1 rounded border bg-accent p-2 text-left">
+              <p>{info.date}</p>
+              <p>{info.totalPrice > 0 ? `$${info.totalPrice}` : ""}</p>
+            </div>
+          )}
         </div>
       </div>
       <div className="flex flex-row justify-between gap-4">

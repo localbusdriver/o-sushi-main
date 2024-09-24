@@ -1,18 +1,8 @@
 "use client";
-import {
-  BillingInfoType,
-  Item,
-  PaymentDetailsType,
-  TotalType,
-} from "../types/type";
 
-import InvoiceItem from "./InvoiceItem";
-import InvoiceModal from "./InvoiceModal";
+import React, { useCallback, useEffect, useState } from "react";
 
-import React, { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import {
   Card,
   CardContent,
@@ -21,6 +11,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -29,6 +21,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  BillingInfoType,
+  Item,
+  PaymentDetailsType,
+  TotalType,
+} from "@/lib/types/invoice-generator-types";
+
+import InvoiceItem from "./invoice-item";
+import InvoiceModal from "./invoice-modal";
 
 const InvoiceForm = ({ currentDate }: { currentDate?: string }) => {
   const [modifiers, setModifiers] = useState<PaymentDetailsType>({
@@ -120,7 +121,7 @@ const InvoiceForm = ({ currentDate }: { currentDate?: string }) => {
   return (
     <form id="Invoice-Form">
       <div className="flex flex-row gap-12">
-        <Card className="flex flex-col xl:p-5 my-3 xl:my-4">
+        <Card className="my-3 flex flex-col xl:my-4 xl:p-5">
           <CardHeader className="flex flex-row items-start justify-between">
             <div className="flex flex-col">
               <div className="flex flex-col">
@@ -130,7 +131,7 @@ const InvoiceForm = ({ currentDate }: { currentDate?: string }) => {
                 </div>
               </div>
               <div className="flex flex-row items-center">
-                <span className="font-bold block me-2">Due&nbsp;Date:</span>
+                <span className="me-2 block font-bold">Due&nbsp;Date:</span>
                 <Input
                   type="date"
                   value={modifiers.dateOfIssue}
@@ -147,7 +148,7 @@ const InvoiceForm = ({ currentDate }: { currentDate?: string }) => {
               </div>
             </div>
             <div className="flex flex-row items-center">
-              <span className="font-bold me-2">Invoice&nbsp;Number:&nbsp;</span>
+              <span className="me-2 font-bold">Invoice&nbsp;Number:&nbsp;</span>
               <Input
                 type="number"
                 value={modifiers.invoiceNumber}
@@ -268,7 +269,7 @@ const InvoiceForm = ({ currentDate }: { currentDate?: string }) => {
               currency={modifiers.currency}
               items={items}
             />
-            <div className="flex flex-row mt-4 justify-end">
+            <div className="mt-4 flex flex-row justify-end">
               <div className="flex flex-col space-y-2">
                 <div className="flex flex-row items-start justify-between">
                   <span className="font-bold">Subtotal:</span>&nbsp;
@@ -277,10 +278,10 @@ const InvoiceForm = ({ currentDate }: { currentDate?: string }) => {
                     {final.subTotal}
                   </span>
                 </div>
-                <div className="flex flex-row items-start justify-between ">
+                <div className="flex flex-row items-start justify-between">
                   <span className="font-bold">Discount:</span>&nbsp;
                   <span>
-                    <span className="text-small ">
+                    <span className="text-small">
                       ({final.discountRate || 0}%)
                     </span>
                     &nbsp;
@@ -288,10 +289,10 @@ const InvoiceForm = ({ currentDate }: { currentDate?: string }) => {
                     {final.discountAmount || 0}
                   </span>
                 </div>
-                <div className="flex flex-row items-start justify-between ">
+                <div className="flex flex-row items-start justify-between">
                   <span className="font-bold">Tax:</span>&nbsp;
                   <span>
-                    <span className="text-small ">({final.taxRate || 0}%)</span>
+                    <span className="text-small">({final.taxRate || 0}%)</span>
                     &nbsp;
                     {modifiers.currency}
                     {final.taxAmount || 0}
@@ -321,7 +322,7 @@ const InvoiceForm = ({ currentDate }: { currentDate?: string }) => {
             />
           </CardContent>
         </Card>
-        <Card className="flex flex-col max-h-[343px]">
+        <Card className="flex max-h-[343px] flex-col">
           <CardHeader className="sticky pt-3 xl:pt-4">
             <InvoiceModal
               billingInfo={billingInfo}
@@ -353,10 +354,10 @@ const InvoiceForm = ({ currentDate }: { currentDate?: string }) => {
                 </SelectContent>
               </Select>
             </div>
-            <div className="flex my-3 gap-8">
+            <div className="my-3 flex gap-8">
               <div className="">
                 <Label className="font-bold">Tax rate:</Label>
-                <div className="my-1 flex items-center justify center flex-nowrap max-w-max">
+                <div className="justify center my-1 flex max-w-max flex-nowrap items-center">
                   <Input
                     name="taxRate"
                     type="number"
@@ -365,20 +366,20 @@ const InvoiceForm = ({ currentDate }: { currentDate?: string }) => {
                       setFinal({ ...final, taxRate: +e.target.value });
                       handleCalculateTotal();
                     }}
-                    className="bg-white/[0.5] border rounded-r-none"
+                    className="rounded-r-none border bg-white/[0.5]"
                     placeholder="0.0"
                     min="0.00"
                     step="0.01"
                     max="100.00"
                   />
-                  <Label className="bg-white/[0.5] font-bold border h-10 px-3 py-2 flex items-center rounded border-l-0 rounded-l-none">
+                  <Label className="flex h-10 items-center rounded rounded-l-none border border-l-0 bg-white/[0.5] px-3 py-2 font-bold">
                     %
                   </Label>
                 </div>
               </div>
               <div>
                 <Label className="font-bold">Discount rate:</Label>
-                <div className="my-1 flex items-center justify center flex-nowrap max-w-max">
+                <div className="justify center my-1 flex max-w-max flex-nowrap items-center">
                   <Input
                     name="discountRate"
                     id="discountRate"
@@ -388,7 +389,7 @@ const InvoiceForm = ({ currentDate }: { currentDate?: string }) => {
                       setFinal({ ...final, discountRate: +e.target.value });
                       handleCalculateTotal();
                     }}
-                    className="bg-white/[0.5] border rounded-r-none"
+                    className="rounded-r-none border bg-white/[0.5]"
                     placeholder="0.0"
                     min="0.00"
                     step="0.01"
@@ -396,7 +397,7 @@ const InvoiceForm = ({ currentDate }: { currentDate?: string }) => {
                   />
                   <Label
                     htmlFor="discountRate"
-                    className="bg-white/[0.5] font-bold border h-10 px-3 py-2 flex items-center rounded border-l-0 rounded-l-none"
+                    className="flex h-10 items-center rounded rounded-l-none border border-l-0 bg-white/[0.5] px-3 py-2 font-bold"
                   >
                     %
                   </Label>

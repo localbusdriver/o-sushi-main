@@ -1,26 +1,27 @@
 "use client";
-import type { Items, Doubles } from "../types";
+
 import {
   Table,
   TableBody,
   TableCaption,
   TableCell,
+  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
-  TableFooter,
 } from "@/components/ui/table";
+import type { Doubles, Items } from "@/lib/types/school-summary-types";
 
 export default function DoubleOrders({ results }: { results: Doubles | null }) {
   return (
     <div className="mt-8">
-      <Table className=" border border-black mx-auto w-[500px]">
+      <Table className="mx-auto w-[500px] border border-black">
         <TableCaption>Double Orders</TableCaption>
         <TableHeader>
           <TableRow>
             <TableCell
               colSpan={5}
-              className="text-primary font-bold text-center"
+              className="text-center font-bold text-primary"
             >
               Double Orders
             </TableCell>
@@ -43,12 +44,16 @@ export default function DoubleOrders({ results }: { results: Doubles | null }) {
                 </TableCell>
                 <TableCell className="text-left">{value.item}</TableCell>
                 <TableCell className="text-left">{value.quantity}</TableCell>
-                <TableCell className="text-left">{value.organization}</TableCell>
+                <TableCell className="text-left">
+                  {value.organization}
+                </TableCell>
               </TableRow>
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={5} className="text-center text-destructive">No Doubles</TableCell>
+              <TableCell colSpan={5} className="text-center text-destructive">
+                No Doubles
+              </TableCell>
             </TableRow>
           )}
         </TableBody>

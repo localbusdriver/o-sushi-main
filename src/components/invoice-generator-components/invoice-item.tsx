@@ -1,6 +1,8 @@
 import { Trash2 } from "lucide-react";
-import EditableField from "./EditableField";
+
 import { Button } from "@/components/ui/button";
+
+import EditableField from "./editable-field";
 
 type InvoiceItemProps = {
   items: any[];
@@ -119,7 +121,7 @@ const ItemRow = ({
         <Trash2
           onClick={handleDelete}
           style={{ height: "33px", width: "33px", padding: "7.5px" }}
-          className="text-white mt-1 bg-red-500 rounded cursor-pointer"
+          className="mt-1 cursor-pointer rounded bg-red-500 text-white"
         />
       </td>
     </tr>
