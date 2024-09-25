@@ -83,7 +83,7 @@ const InvoiceForm = ({ currentDate }: { currentDate?: string }) => {
       discountAmount: newdiscountAmount,
       total: newTotal,
     }));
-  }, [items, final.taxRate, final.discountRate]);
+  }, [items, final]);
 
   useEffect(() => {
     handleCalculateTotal();
