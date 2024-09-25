@@ -1,8 +1,10 @@
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 
 const EditableField = ({
   cellData,
   onItemizedItemEdit,
+  className,
 }: {
   cellData: {
     type: string;
@@ -15,20 +17,27 @@ const EditableField = ({
     step?: string;
     textAlign?: string;
   };
+  className?: string;
   onItemizedItemEdit: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) => {
   console.log(cellData);
   return (
-    <div id="Editable-Field" className="my-1 flex-nowrap">
+    <div
+      id="Editable-Field"
+      className={cn("my-1 flex flex-nowrap items-center", className)}
+    >
       {cellData.leading != null && (
-        <div className="border-0 bg-white/[0.5] px-2 font-bold text-secondary">
-          <span className="flex h-[20px] w-[20px] items-center justify-center rounded-full border-2 border-secondary">
+        <div className="flex h-10 items-center rounded rounded-r-none border border-r-0 bg-white/[0.5] px-2 font-bold text-secondary">
+          <span className="flex h-[20px] w-[20px] items-center justify-center rounded-full border border-secondary-foreground/[0.5] text-secondary-foreground/[0.5]">
             {cellData.leading}
           </span>
         </div>
       )}
       <Input
-        className={cellData.textAlign}
+        className={cn(
+          cellData.textAlign,
+          cellData.name === "price" && "rounded-l-none"
+        )}
         type={cellData.type}
         placeholder={cellData.placeholder}
         min={cellData.min}

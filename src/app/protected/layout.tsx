@@ -8,7 +8,7 @@ function Layout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <ProtectedNav />
-      <main className="mt-24 px-36">{children}</main>
+      <main className="md:mt-24 md:px-36">{children}</main>
     </>
   );
 }

@@ -11,6 +11,7 @@ type InvoiceItemProps = {
   onRowDel: (item: any) => void;
   onRowAdd: () => void;
 };
+
 const InvoiceItem = ({
   items,
   onItemizedItemEdit,
@@ -19,29 +20,26 @@ const InvoiceItem = ({
   onRowAdd,
 }: InvoiceItemProps) => {
   return (
-    <div id="Invoice-Item">
-      <table>
-        <thead>
-          <tr>
-            <th>ITEM</th>
-            <th>QTY</th>
-            <th>PRICE/RATE</th>
-            <th className="text-center">ACTION</th>
-          </tr>
-        </thead>
-        <tbody>
-          {items.map((item) => (
-            <ItemRow
-              key={item.id}
-              item={item}
-              onItemizedItemEdit={onItemizedItemEdit}
-              onDelEvent={onRowDel}
-              currency={currency}
-            />
-          ))}
-        </tbody>
-      </table>
-      <Button variant="secondary" className="font-bold" onClick={onRowAdd}>
+    <div id="Invoice-Item" className="sm:max-w-[747px]">
+      <div className="grid grid-cols-12 gap-y-2">
+        <div className="col-span-12 row-span-1 grid grid-cols-12 gap-x-3 font-bold">
+          <h3 className="col-span-6">ITEM</h3>
+          <h3 className="col-span-2">QTY</h3>
+          <h3 className="col-span-2">PRICE/RATE</h3>
+          <h3 className="col-span-2 text-center">ACTION</h3>
+        </div>
+
+        {items.map((item) => (
+          <ItemRow
+            key={item.id}
+            item={item}
+            onItemizedItemEdit={onItemizedItemEdit}
+            onDelEvent={onRowDel}
+            currency={currency}
+          />
+        ))}
+      </div>
+      <Button variant="secondary" className="mt-4 font-bold" onClick={onRowAdd}>
         Add Item
       </Button>
     </div>
@@ -66,18 +64,56 @@ const ItemRow = ({
   };
 
   return (
-    <tr className="items-center">
-      <td className="w-full">
-        <EditableField
-          onItemizedItemEdit={onItemizedItemEdit}
-          cellData={{
-            type: "text",
-            name: "name",
-            placeholder: "Item name",
-            value: item.name,
-            id: item.id,
-          }}
-        />
+    <>
+      <div className="col-span-12 grid grid-cols-12 items-center gap-3">
+        <div className="col-span-6">
+          <EditableField
+            onItemizedItemEdit={onItemizedItemEdit}
+            cellData={{
+              type: "text",
+              name: "name",
+              placeholder: "Item name",
+              value: item.name,
+              id: item.id,
+            }}
+          />
+        </div>
+        <div className="col-span-2">
+          <EditableField
+            onItemizedItemEdit={onItemizedItemEdit}
+            cellData={{
+              type: "number",
+              name: "quantity",
+              min: 1,
+              step: "1",
+              value: item.quantity,
+              id: item.id,
+            }}
+          />
+        </div>
+        <div className="col-span-2">
+          <EditableField
+            onItemizedItemEdit={onItemizedItemEdit}
+            cellData={{
+              leading: currency,
+              type: "number",
+              name: "price",
+              min: 1,
+              step: "0.01",
+              textAlign: "text-end",
+              value: item.price,
+              id: item.id,
+            }}
+          />
+        </div>
+        <div className="col-span-2">
+          <Trash2
+            onClick={handleDelete}
+            className="mx-auto mb-1 size-[33px] cursor-pointer rounded bg-red-500 p-[7.5px] text-white"
+          />
+        </div>
+      </div>
+      <div className="col-span-6 border-b-2 pb-2 pr-1">
         <EditableField
           onItemizedItemEdit={onItemizedItemEdit}
           cellData={{
@@ -88,43 +124,8 @@ const ItemRow = ({
             id: item.id,
           }}
         />
-      </td>
-      <td style={{ minWidth: "70px" }}>
-        <EditableField
-          onItemizedItemEdit={onItemizedItemEdit}
-          cellData={{
-            type: "number",
-            name: "quantity",
-            min: 1,
-            step: "1",
-            value: item.quantity,
-            id: item.id,
-          }}
-        />
-      </td>
-      <td style={{ minWidth: "130px" }}>
-        <EditableField
-          onItemizedItemEdit={onItemizedItemEdit}
-          cellData={{
-            leading: currency,
-            type: "number",
-            name: "price",
-            min: 1,
-            step: "0.01",
-            textAlign: "text-end",
-            value: item.price,
-            id: item.id,
-          }}
-        />
-      </td>
-      <td className="text-center" style={{ minWidth: "50px" }}>
-        <Trash2
-          onClick={handleDelete}
-          style={{ height: "33px", width: "33px", padding: "7.5px" }}
-          className="mt-1 cursor-pointer rounded bg-red-500 text-white"
-        />
-      </td>
-    </tr>
+      </div>
+    </>
   );
 };
 

@@ -116,11 +116,9 @@ const InvoiceForm = ({ currentDate }: { currentDate?: string }) => {
     );
     setItems(updatedItems);
   };
-
-  //  onSubmit={openModal}
   return (
     <form id="Invoice-Form">
-      <div className="flex flex-row gap-12">
+      <div className="flex-row flex-wrap gap-12 md:flex">
         <Card className="my-3 flex flex-col xl:my-4 xl:p-5">
           <CardHeader className="flex flex-row items-start justify-between">
             <div className="flex flex-col">
@@ -160,7 +158,7 @@ const InvoiceForm = ({ currentDate }: { currentDate?: string }) => {
                   }));
                 }}
                 min="1"
-                style={{ maxWidth: "70px" }}
+                className="max-w-[70px]"
                 required
               />
             </div>
