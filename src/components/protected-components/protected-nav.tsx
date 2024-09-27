@@ -64,7 +64,7 @@ const ProtectedNav = () => {
         transition={{
           duration: 0.2,
         }}
-        className="border-black/.1 fixed inset-x-0 top-10 z-[5000] mx-auto flex max-w-fit items-center justify-center gap-1 space-x-2 rounded-lg border px-6 py-4 text-sm shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)] md:min-w-[70vw] lg:min-w-fit"
+        className="border-black/.1 fixed inset-x-0 top-10 z-[5000] mx-auto flex max-w-fit items-center justify-center gap-1 space-x-2 rounded-lg border px-6 py-4 text-sm shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)] lg:min-w-fit"
         style={{
           backdropFilter: "blur(16px) saturate(180%)",
           backgroundColor: "rgba(255, 255, 255, 0.125)",
@@ -118,7 +118,7 @@ const NavLink = ({
 }) => {
   return (
     <Link
-      href={url || ""}
+      href={(url as __next_route_internal_types__.RouteImpl<string>) || "/"}
       rel="nofollow"
       className="block overflow-hidden"
       onClick={onClick}

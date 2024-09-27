@@ -2,14 +2,14 @@
 
 import React, { useCallback, useEffect, useState } from "react";
 
+import { Decimal } from "decimal.js";
+
 import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,34 +27,17 @@ import {
   PaymentDetailsType,
   TotalType,
 } from "@/lib/types/invoice-generator-types";
+import { formatDecimal } from "@/lib/utils";
 
 import InvoiceItem from "./invoice-item";
 import InvoiceModal from "./invoice-modal";
 
-const InvoiceForm = ({ currentDate }: { currentDate?: string }) => {
+const InvoiceForm: React.FC<{ currentDate?: string }> = ({ currentDate }) => {
   const [modifiers, setModifiers] = useState<PaymentDetailsType>({
     currency: "$",
     invoiceNumber: 1,
     dateOfIssue: "",
     notes: "",
-  });
-
-  const [billingInfo, setBillingInfo] = useState<BillingInfoType>({
-    billTo: "",
-    billToEmail: "",
-    billToAddress: "",
-    billFrom: "",
-    billFromEmail: "",
-    billFromAddress: "",
-  });
-
-  const [final, setFinal] = useState<TotalType>({
-    total: 0,
-    subTotal: 0,
-    taxRate: 0,
-    taxAmount: 0,
-    discountRate: 0,
-    discountAmount: 0,
   });
 
   const [items, setItems] = useState<Item[]>([
@@ -67,23 +50,46 @@ const InvoiceForm = ({ currentDate }: { currentDate?: string }) => {
     },
   ]);
 
+  const [final, setFinal] = useState<TotalType>({
+    total: new Decimal(0),
+    subTotal: new Decimal(0),
+    taxRate: new Decimal(0),
+    taxAmount: new Decimal(0),
+    discountRate: new Decimal(0),
+    discountAmount: new Decimal(0),
+  });
+
+  const [billingInfo, setBillingInfo] = useState<BillingInfoType>({
+    billTo: "",
+    billToEmail: "",
+    billToAddress: "",
+    billFrom: "",
+    billFromEmail: "",
+    billFromAddress: "",
+  });
+
   const handleCalculateTotal = useCallback(() => {
-    let newSubTotal: number = items.reduce((acc, item) => {
-      return acc + parseFloat(item.price) * item.quantity;
-    }, 0);
+    let newSubTotal: Decimal = items.reduce(
+      (acc, item) => acc.plus(new Decimal(item.price).times(item.quantity)),
+      new Decimal(0)
+    );
 
-    let newtaxAmount: number = newSubTotal * (final.taxRate / 100);
-    let newdiscountAmount: number = newSubTotal * (final.discountRate / 100);
-    let newTotal: number = newSubTotal - newdiscountAmount + newtaxAmount;
+    let newtaxAmount: Decimal = newSubTotal.times(final.taxRate.dividedBy(100));
+    let newdiscountAmount: Decimal = newSubTotal.times(
+      final.discountRate.dividedBy(100)
+    );
+    let newTotal: Decimal = newSubTotal
+      .minus(newdiscountAmount)
+      .plus(newtaxAmount);
 
-    setFinal(() => ({
+    setFinal((final) => ({
       ...final,
       subTotal: newSubTotal,
       taxAmount: newtaxAmount,
       discountAmount: newdiscountAmount,
       total: newTotal,
     }));
-  }, [items, final]);
+  }, [items, final.taxRate, final.discountRate]);
 
   useEffect(() => {
     handleCalculateTotal();
@@ -116,9 +122,11 @@ const InvoiceForm = ({ currentDate }: { currentDate?: string }) => {
     );
     setItems(updatedItems);
   };
+
   return (
-    <form id="Invoice-Form">
-      <div className="flex-row flex-wrap gap-12 md:flex">
+    <div id="">
+      <div className="mx-auto lg:absolute lg:left-24">
+        {/* <div className="flex-row flex-wrap gap-12 md:flex"> */}
         <Card className="my-3 flex flex-col xl:my-4 xl:p-5">
           <CardHeader className="flex flex-row items-start justify-between">
             <div className="flex flex-col">
@@ -264,7 +272,7 @@ const InvoiceForm = ({ currentDate }: { currentDate?: string }) => {
               onItemizedItemEdit={onItemizedItemEdit}
               onRowAdd={handleAddEvent}
               onRowDel={handleRowDel}
-              currency={modifiers.currency}
+              // currency={modifiers.currency}
               items={items}
             />
             <div className="mt-4 flex flex-row justify-end">
@@ -273,27 +281,29 @@ const InvoiceForm = ({ currentDate }: { currentDate?: string }) => {
                   <span className="font-bold">Subtotal:</span>&nbsp;
                   <span>
                     {modifiers.currency}
-                    {final.subTotal}
+                    {formatDecimal(final.subTotal)}
                   </span>
                 </div>
                 <div className="flex flex-row items-start justify-between">
                   <span className="font-bold">Discount:</span>&nbsp;
                   <span>
                     <span className="text-small">
-                      ({final.discountRate || 0}%)
+                      ({formatDecimal(final.discountRate) || 0}%)
                     </span>
                     &nbsp;
                     {modifiers.currency}
-                    {final.discountAmount || 0}
+                    {formatDecimal(final.discountAmount) || 0}
                   </span>
                 </div>
                 <div className="flex flex-row items-start justify-between">
                   <span className="font-bold">Tax:</span>&nbsp;
                   <span>
-                    <span className="text-small">({final.taxRate || 0}%)</span>
+                    <span className="text-small">
+                      ({formatDecimal(final.taxRate) || 0}%)
+                    </span>
                     &nbsp;
                     {modifiers.currency}
-                    {final.taxAmount || 0}
+                    {formatDecimal(final.taxAmount) || 0}
                   </span>
                 </div>
                 <hr />
@@ -301,7 +311,7 @@ const InvoiceForm = ({ currentDate }: { currentDate?: string }) => {
                   <span className="font-bold">Total:</span>&nbsp;
                   <span className="font-bold">
                     {modifiers.currency}
-                    {final.total || 0}
+                    {formatDecimal(final.total) || 0}
                   </span>
                 </div>
               </div>
@@ -320,98 +330,135 @@ const InvoiceForm = ({ currentDate }: { currentDate?: string }) => {
             />
           </CardContent>
         </Card>
-        <Card className="flex max-h-[343px] flex-col">
-          <CardHeader className="sticky pt-3 xl:pt-4">
-            <InvoiceModal
-              billingInfo={billingInfo}
-              modifiers={modifiers}
-              items={items}
-              final={final}
-            />
-          </CardHeader>
-          <CardContent>
-            <div className="mb-3">
-              <Label className="font-bold">Currency:</Label>
+        <SidePanel
+          modifiers={modifiers}
+          items={items}
+          final={final}
+          billingInfo={billingInfo}
+          setFinal={setFinal}
+          handleCalculateTotal={handleCalculateTotal}
+        />
+      </div>
+    </div>
+  );
+};
+
+export default InvoiceForm;
+
+type SidePanelProps = {
+  modifiers: PaymentDetailsType;
+  items: Item[];
+  final: TotalType;
+  billingInfo: BillingInfoType;
+  setFinal: React.Dispatch<React.SetStateAction<TotalType>>;
+  handleCalculateTotal: () => void;
+};
+const SidePanel = ({
+  modifiers,
+  items,
+  final,
+  billingInfo,
+  setFinal,
+  handleCalculateTotal,
+}: SidePanelProps) => {
+  return (
+    <Card className="mx-auto flex h-fit max-w-max flex-col lg:fixed lg:right-24 lg:top-28">
+      {/* <Card className="flex h-fit max-w-max flex-col"> */}
+      <CardContent>
+        {/* <div className="mb-3">
+              <Label className="font-bold" htmlFor="currency-select">
+                Currency:
+              </Label>
               <Select
                 onValueChange={(val) => {
                   setModifiers(() => ({ ...modifiers, currency: val }));
                 }}
                 value={modifiers.currency}
+                name="currency-select"
                 aria-label="Change Currency"
               >
+                <SelectValue className="text-sm"></SelectValue>
                 <SelectTrigger>Change Currency</SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="$">NZD (New Zealand Dollar)</SelectItem>
-                  <SelectItem value="$">USD (United States Dollar)</SelectItem>
+                  <SelectItem value="NZD">NZD (New Zealand Dollar)</SelectItem>
+                  <SelectItem value="USD">
+                    USD (United States Dollar)
+                  </SelectItem>
                   <SelectItem value="£">
                     GBP (British Pound Sterling)
                   </SelectItem>
-                  <SelectItem value="¥">JPY (Japanese Yen)</SelectItem>
-                  <SelectItem value="$">CAD (Canadian Dollar)</SelectItem>
-                  <SelectItem value="$">AUD (Australian Dollar)</SelectItem>
+                  <SelectItem value="JPY">JPY (Japanese Yen)</SelectItem>
+                  <SelectItem value="CAD">CAD (Canadian Dollar)</SelectItem>
+                  <SelectItem value="AUD">AUD (Australian Dollar)</SelectItem>
                 </SelectContent>
               </Select>
+            </div> */}
+        <div className="my-3 flex gap-4">
+          <div className="">
+            <Label className="font-bold">Tax rate:</Label>
+            <div className="justify center my-1 flex max-w-max flex-nowrap items-center">
+              <Input
+                name="taxRate"
+                type="number"
+                value={formatDecimal(final.taxRate)}
+                onChange={(e) => {
+                  setFinal({
+                    ...final,
+                    taxRate: new Decimal(e.target.value),
+                  });
+                  handleCalculateTotal();
+                }}
+                className="max-w-[80px] rounded-r-none border bg-white/[0.5]"
+                placeholder="0.0"
+                min="0.00"
+                step="0.01"
+                max="100.00"
+              />
+              <Label className="flex h-10 items-center rounded rounded-l-none border border-l-0 bg-white/[0.5] px-3 py-2 font-bold">
+                %
+              </Label>
             </div>
-            <div className="my-3 flex gap-8">
-              <div className="">
-                <Label className="font-bold">Tax rate:</Label>
-                <div className="justify center my-1 flex max-w-max flex-nowrap items-center">
-                  <Input
-                    name="taxRate"
-                    type="number"
-                    value={final.taxRate}
-                    onChange={(e) => {
-                      setFinal({ ...final, taxRate: +e.target.value });
-                      handleCalculateTotal();
-                    }}
-                    className="rounded-r-none border bg-white/[0.5]"
-                    placeholder="0.0"
-                    min="0.00"
-                    step="0.01"
-                    max="100.00"
-                  />
-                  <Label className="flex h-10 items-center rounded rounded-l-none border border-l-0 bg-white/[0.5] px-3 py-2 font-bold">
-                    %
-                  </Label>
-                </div>
-              </div>
-              <div>
-                <Label className="font-bold">Discount rate:</Label>
-                <div className="justify center my-1 flex max-w-max flex-nowrap items-center">
-                  <Input
-                    name="discountRate"
-                    id="discountRate"
-                    type="number"
-                    value={final.discountRate}
-                    onChange={(e) => {
-                      setFinal({ ...final, discountRate: +e.target.value });
-                      handleCalculateTotal();
-                    }}
-                    className="rounded-r-none border bg-white/[0.5]"
-                    placeholder="0.0"
-                    min="0.00"
-                    step="0.01"
-                    max="100.00"
-                  />
-                  <Label
-                    htmlFor="discountRate"
-                    className="flex h-10 items-center rounded rounded-l-none border border-l-0 bg-white/[0.5] px-3 py-2 font-bold"
-                  >
-                    %
-                  </Label>
-                </div>
-              </div>
+          </div>
+          <div>
+            <Label className="font-bold">Discount rate:</Label>
+            <div className="justify center my-1 flex max-w-max flex-nowrap items-center">
+              <Input
+                name="discountRate"
+                id="discountRate"
+                type="number"
+                value={formatDecimal(final.discountRate)}
+                onChange={(e) => {
+                  setFinal({
+                    ...final,
+                    discountRate: new Decimal(e.target.value),
+                  });
+                  handleCalculateTotal();
+                }}
+                className="max-w-[80px] rounded-r-none border bg-white/[0.5]"
+                placeholder="0.0"
+                min="0.00"
+                step="0.01"
+                max="100.00"
+              />
+              <Label
+                htmlFor="discountRate"
+                className="flex h-10 items-center rounded rounded-l-none border border-l-0 bg-white/[0.5] px-3 py-2 font-bold"
+              >
+                %
+              </Label>
             </div>
-          </CardContent>
-          <CardFooter>
-            <Button variant="secondary" type="submit" className="block w-full">
-              Review Invoice
-            </Button>
-          </CardFooter>
-        </Card>
-      </div>
-    </form>
+          </div>
+        </div>
+      </CardContent>
+      <CardFooter className="flex items-center justify-center">
+        <InvoiceModal
+          billingInfo={billingInfo}
+          modifiers={modifiers}
+          items={items}
+          final={final}
+          className="block w-full rounded border bg-secondary px-3 py-2 transition hover:border-accent hover:bg-secondary/[0.7]"
+        />
+      </CardFooter>
+    </Card>
   );
 };
-
-export default InvoiceForm;

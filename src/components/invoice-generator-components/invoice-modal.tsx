@@ -1,5 +1,6 @@
 "use client";
 
+import { Decimal } from "decimal.js";
 import html2canvas from "html2canvas";
 import { Download } from "lucide-react";
 
@@ -18,6 +19,8 @@ import {
   PaymentDetailsType,
   TotalType,
 } from "@/lib/types/invoice-generator-types";
+import { formatDecimal } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 // const GenerateInvoice = () => {
 //   html2canvas(document.querySelector("#invoiceCapture")).then((canvas) => {
@@ -41,6 +44,7 @@ type InvoiceModalProps = {
   modifiers: PaymentDetailsType;
   final: TotalType;
   items: any[];
+  className: string;
 };
 
 const InvoiceModal = ({
@@ -48,6 +52,7 @@ const InvoiceModal = ({
   modifiers,
   items,
   final,
+  className,
 }: InvoiceModalProps) => {
   const { currency, invoiceNumber, dateOfIssue, notes } = modifiers;
   const {
@@ -62,9 +67,7 @@ const InvoiceModal = ({
 
   return (
     <Dialog>
-      <DialogTrigger className="rounded border px-3 py-2 transition hover:border-accent hover:bg-primary-foreground">
-        Finalise
-      </DialogTrigger>
+      <DialogTrigger className={cn("", className)}>Finalise</DialogTrigger>
       <DialogContent>
         <div id="invoiceCapture">
           <div className="w-100 flex flex-row items-start justify-between bg-white/[0.5] p-4">
@@ -78,7 +81,7 @@ const InvoiceModal = ({
               <h6 className="mb-2 mt-1 font-bold">Amount&nbsp;Due:</h6>
               <h5 className="font-bold text-secondary">
                 {" "}
-                {currency} {total}
+                {currency} {formatDecimal(total)}
               </h5>
             </div>
           </div>
@@ -142,28 +145,28 @@ const InvoiceModal = ({
                     SUBTOTAL
                   </td>
                   <td className="text-end" style={{ width: "100px" }}>
-                    {currency} {subTotal}
+                    {currency} {formatDecimal(subTotal)}
                   </td>
                 </tr>
-                {taxAmount != 0.0 && (
+                {formatDecimal(taxAmount) != 0.0 && (
                   <tr className="text-end">
                     <td></td>
                     <td className="font-bold" style={{ width: "100px" }}>
                       TAX
                     </td>
                     <td className="text-end" style={{ width: "100px" }}>
-                      {currency} {taxAmount}
+                      {currency} {formatDecimal(taxAmount)}
                     </td>
                   </tr>
                 )}
-                {discountAmount != 0.0 && (
+                {formatDecimal(discountAmount) != 0.0 && (
                   <tr className="text-end">
                     <td></td>
                     <td className="font-bold" style={{ width: "100px" }}>
                       DISCOUNT
                     </td>
                     <td className="text-end" style={{ width: "100px" }}>
-                      {currency} {discountAmount}
+                      {currency} {formatDecimal(discountAmount)}
                     </td>
                   </tr>
                 )}
@@ -173,7 +176,7 @@ const InvoiceModal = ({
                     TOTAL
                   </td>
                   <td className="text-end" style={{ width: "100px" }}>
-                    {currency} {total}
+                    {currency} {formatDecimal(total)}
                   </td>
                 </tr>
               </tbody>

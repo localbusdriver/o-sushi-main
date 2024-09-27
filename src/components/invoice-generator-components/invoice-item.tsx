@@ -7,7 +7,7 @@ import EditableField from "./editable-field";
 type InvoiceItemProps = {
   items: any[];
   onItemizedItemEdit: (evt: React.ChangeEvent<HTMLInputElement>) => void;
-  currency: string;
+  currency?: string;
   onRowDel: (item: any) => void;
   onRowAdd: () => void;
 };
@@ -21,12 +21,11 @@ const InvoiceItem = ({
 }: InvoiceItemProps) => {
   return (
     <div id="Invoice-Item" className="sm:max-w-[747px]">
-      <div className="grid grid-cols-12 gap-y-2">
-        <div className="col-span-12 row-span-1 grid grid-cols-12 gap-x-3 font-bold">
+      <div className="grid grid-cols-11 gap-y-2">
+        <div className="col-span-12 row-span-1 grid grid-cols-12 gap-x-2 font-bold">
           <h3 className="col-span-6">ITEM</h3>
           <h3 className="col-span-2">QTY</h3>
           <h3 className="col-span-2">PRICE/RATE</h3>
-          <h3 className="col-span-2 text-center">ACTION</h3>
         </div>
 
         {items.map((item) => (
@@ -49,7 +48,7 @@ const InvoiceItem = ({
 type ItemRowProps = {
   item: any;
   onItemizedItemEdit: (evt: React.ChangeEvent<HTMLInputElement>) => void;
-  currency: string;
+  currency?: string;
   onDelEvent: (item: any) => void;
 };
 
@@ -65,7 +64,7 @@ const ItemRow = ({
 
   return (
     <>
-      <div className="col-span-12 grid grid-cols-12 items-center gap-3">
+      <div className="col-span-12 grid grid-cols-12 items-center gap-2">
         <div className="col-span-6">
           <EditableField
             onItemizedItemEdit={onItemizedItemEdit}
@@ -95,7 +94,7 @@ const ItemRow = ({
           <EditableField
             onItemizedItemEdit={onItemizedItemEdit}
             cellData={{
-              leading: currency,
+              leading: "$",
               type: "number",
               name: "price",
               min: 1,

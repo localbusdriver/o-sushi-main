@@ -1,3 +1,5 @@
+import { Decimal } from "decimal.js";
+
 export type Item = {
   id: string;
   name: string;
@@ -26,10 +28,10 @@ export type BillingInfoType = {
 
 // final
 export type TotalType = {
-  total: number;
-  subTotal: number;
-  taxRate: number;
-  taxAmount: number;
-  discountRate: number;
-  discountAmount: number;
+  total: Decimal;
+  subTotal: Decimal;
+  taxRate: Decimal;
+  taxAmount: Decimal;
+  discountRate: Decimal;
+  discountAmount: Decimal;
 };
