@@ -8,7 +8,7 @@ import SummaryTable from "@/components/school-summary-components/summary-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
+import type {
   Doubles,
   Info,
   Items,
@@ -21,7 +21,10 @@ const Page: FC = () => {
   const [file, setFile] = useState<string>("");
   const [summary, setSummary] = useState<Summary | null>(null);
   const [doubles, setDoubles] = useState<Doubles | null>(null);
-  const [info, setInfo] = useState<Info>({ date: "", totalPrice: 0 });
+  const [info, setInfo] = useState<Info>({
+    date: new Date().toDateString(),
+    totalPrice: 0,
+  });
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const fullFile = e.target.files?.[0];
 
@@ -43,6 +46,8 @@ const Page: FC = () => {
     setDoubles(null);
     (document.getElementById("customFile") as HTMLInputElement).value = "";
   };
+
+  useEffect(() => {}, []);
 
   useEffect(() => {
     if (!file) {
@@ -126,14 +131,26 @@ const Page: FC = () => {
       });
 
       setSummary(res);
-      setInfo({ ...temp, totalPrice: Math.round(temp.totalPrice * 100) / 100 });
+      setInfo({
+        ...temp,
+        date: date,
+        totalPrice: Math.round(temp.totalPrice * 100) / 100,
+      });
     }
   }, [file]);
 
   return (
     <section className="page">
       <div className="flex flex-col justify-start gap-2">
-        <h1 className="text-left">School Summary</h1>
+        <div id="" className="flex items-center justify-start gap-8">
+          <h1 className="text-left text-3xl">School Summary</h1>
+          {info.date && (
+            <div className="w-fit space-y-1 rounded border bg-accent p-2 text-left">
+              <p>{info.date}</p>
+              <p>{info.totalPrice > 0 ? `$${info.totalPrice}` : ""}</p>
+            </div>
+          )}
+        </div>
 
         <Label htmlFor="customFile">
           &nbsp;Upload a&nbsp;
@@ -155,13 +172,6 @@ const Page: FC = () => {
               Clear
             </Button>
           </div>
-
-          {info.date && (
-            <div className="w-fit space-y-1 rounded border bg-accent p-2 text-left">
-              <p>{info.date}</p>
-              <p>{info.totalPrice > 0 ? `$${info.totalPrice}` : ""}</p>
-            </div>
-          )}
         </div>
       </div>
       <div className="flex flex-row justify-between gap-4">
