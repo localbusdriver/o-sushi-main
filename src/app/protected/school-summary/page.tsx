@@ -125,11 +125,8 @@ const Page: FC = () => {
         };
       });
 
-      console.log(temp);
       setSummary(res);
       setInfo({ ...temp, totalPrice: Math.round(temp.totalPrice * 100) / 100 });
-
-      console.log(info);
     }
   }, [file]);
 
