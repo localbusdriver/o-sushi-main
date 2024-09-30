@@ -1,5 +1,6 @@
 "use client";
 
+import { Route } from "next";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -118,7 +119,7 @@ const NavLink = ({
 }) => {
   return (
     <Link
-      href={(url as __next_route_internal_types__.RouteImpl<string>) || "/"}
+      href={(url as Route) || "/"}
       rel="nofollow"
       className="block overflow-hidden"
       onClick={onClick}
