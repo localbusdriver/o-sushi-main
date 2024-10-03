@@ -1,8 +1,10 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import { Decimal } from "decimal.js";
+import html2canvas from "html2canvas";
+import { jsPDF } from "jspdf";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -13,13 +15,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import {
   BillingInfoType,
@@ -30,9 +25,35 @@ import {
 import { formatDecimal } from "@/lib/utils";
 
 import InvoiceItem from "./invoice-item";
-import InvoiceModal from "./invoice-modal";
 
 const InvoiceForm: React.FC<{ currentDate?: string }> = ({ currentDate }) => {
+  const generateInvoice = () => {
+    const captureElement: HTMLElement | null =
+      document.getElementById("invoice-capture");
+    if (!captureElement) return;
+    html2canvas(captureElement).then((canvas) => {
+      const imgData = canvas.toDataURL("image/png", 1.0);
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "pt",
+        format: [612, 792],
+      });
+      pdf.internal.scaleFactor = 1;
+      const imgProps = pdf.getImageProperties(imgData);
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+      window.open(pdf.output("bloburl"), "_blank");
+      // pdf.save("invoice-001.pdf");
+    });
+  };
+
+  const itemIdCounterRef = useRef(0);
+  const generateItemId = useCallback(() => {
+    itemIdCounterRef.current += 1;
+    return `item-${itemIdCounterRef.current}`;
+  }, []);
+
   const [modifiers, setModifiers] = useState<PaymentDetailsType>({
     currency: "$",
     invoiceNumber: 1,
@@ -42,7 +63,7 @@ const InvoiceForm: React.FC<{ currentDate?: string }> = ({ currentDate }) => {
 
   const [items, setItems] = useState<Item[]>([
     {
-      id: (+new Date() + Math.floor(Math.random() * 999999)).toString(36),
+      id: generateItemId(),
       name: "",
       description: "",
       price: "1.00",
@@ -73,7 +94,6 @@ const InvoiceForm: React.FC<{ currentDate?: string }> = ({ currentDate }) => {
       (acc, item) => acc.plus(new Decimal(item.price).times(item.quantity)),
       new Decimal(0)
     );
-
     let newtaxAmount: Decimal = newSubTotal.times(final.taxRate.dividedBy(100));
     let newdiscountAmount: Decimal = newSubTotal.times(
       final.discountRate.dividedBy(100)
@@ -100,34 +120,43 @@ const InvoiceForm: React.FC<{ currentDate?: string }> = ({ currentDate }) => {
     setItems(updatedItems);
   };
 
-  const handleAddEvent = () => {
-    const id = (+new Date() + Math.floor(Math.random() * 999999)).toString(36);
+  const handleAddEvent = useCallback(() => {
     const newItem = {
-      id,
+      id: generateItemId(),
       name: "",
       price: "1.00",
       description: "",
       quantity: 1,
     };
-    setItems([...items, newItem]);
-  };
+    setItems((prevItems) => [...prevItems, newItem]);
+  }, [generateItemId]);
 
   const onItemizedItemEdit = (evt: React.ChangeEvent<HTMLInputElement>) => {
     const { id, name, value } = evt.target;
-
-    console.log(id, name, value);
-
-    const updatedItems = items.map((item) =>
-      item.id === id ? { ...item, [name]: value } : item
-    );
+    const prev = items;
+    const updatedItems = prev.map((item) => {
+      if (item.id === id) {
+        if (name === "price" || name === "quantity") {
+          return { ...item, [name]: new Decimal(value) };
+        }
+        return { ...item, [name]: value };
+      }
+      return item;
+    });
     setItems(updatedItems);
   };
+
+  useEffect(() => {
+    console.log("items", items);
+  }, [items]);
 
   return (
     <div id="">
       <div className="mx-auto lg:absolute lg:left-24">
-        {/* <div className="flex-row flex-wrap gap-12 md:flex"> */}
-        <Card className="my-3 flex flex-col xl:my-4 xl:p-5">
+        <Card
+          className="my-3 flex flex-col xl:my-4 xl:p-5"
+          id="invoice-capture"
+        >
           <CardHeader className="flex flex-row items-start justify-between">
             <div className="flex flex-col">
               <div className="flex flex-col">
@@ -269,11 +298,10 @@ const InvoiceForm: React.FC<{ currentDate?: string }> = ({ currentDate }) => {
               </div>
             </div>
             <InvoiceItem
+              items={items}
               onItemizedItemEdit={onItemizedItemEdit}
               onRowAdd={handleAddEvent}
               onRowDel={handleRowDel}
-              // currency={modifiers.currency}
-              items={items}
             />
             <div className="mt-4 flex flex-row justify-end">
               <div className="flex flex-col space-y-2">
@@ -331,12 +359,10 @@ const InvoiceForm: React.FC<{ currentDate?: string }> = ({ currentDate }) => {
           </CardContent>
         </Card>
         <SidePanel
-          modifiers={modifiers}
-          items={items}
           final={final}
-          billingInfo={billingInfo}
           setFinal={setFinal}
           handleCalculateTotal={handleCalculateTotal}
+          generateInvoice={generateInvoice}
         />
       </div>
     </div>
@@ -346,53 +372,21 @@ const InvoiceForm: React.FC<{ currentDate?: string }> = ({ currentDate }) => {
 export default InvoiceForm;
 
 type SidePanelProps = {
-  modifiers: PaymentDetailsType;
-  items: Item[];
   final: TotalType;
-  billingInfo: BillingInfoType;
   setFinal: React.Dispatch<React.SetStateAction<TotalType>>;
   handleCalculateTotal: () => void;
+  generateInvoice: () => void;
 };
 const SidePanel = ({
-  modifiers,
-  items,
   final,
-  billingInfo,
   setFinal,
   handleCalculateTotal,
+  generateInvoice,
 }: SidePanelProps) => {
   return (
     <Card className="mx-auto flex h-fit max-w-max flex-col lg:fixed lg:right-24 lg:top-28">
       {/* <Card className="flex h-fit max-w-max flex-col"> */}
       <CardContent>
-        {/* <div className="mb-3">
-              <Label className="font-bold" htmlFor="currency-select">
-                Currency:
-              </Label>
-              <Select
-                onValueChange={(val) => {
-                  setModifiers(() => ({ ...modifiers, currency: val }));
-                }}
-                value={modifiers.currency}
-                name="currency-select"
-                aria-label="Change Currency"
-              >
-                <SelectValue className="text-sm"></SelectValue>
-                <SelectTrigger>Change Currency</SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="NZD">NZD (New Zealand Dollar)</SelectItem>
-                  <SelectItem value="USD">
-                    USD (United States Dollar)
-                  </SelectItem>
-                  <SelectItem value="£">
-                    GBP (British Pound Sterling)
-                  </SelectItem>
-                  <SelectItem value="JPY">JPY (Japanese Yen)</SelectItem>
-                  <SelectItem value="CAD">CAD (Canadian Dollar)</SelectItem>
-                  <SelectItem value="AUD">AUD (Australian Dollar)</SelectItem>
-                </SelectContent>
-              </Select>
-            </div> */}
         <div className="my-3 flex gap-4">
           <div className="">
             <Label className="font-bold">Tax rate:</Label>
@@ -451,13 +445,7 @@ const SidePanel = ({
         </div>
       </CardContent>
       <CardFooter className="flex items-center justify-center">
-        <InvoiceModal
-          billingInfo={billingInfo}
-          modifiers={modifiers}
-          items={items}
-          final={final}
-          className="block w-full rounded border bg-secondary px-3 py-2 transition hover:border-accent hover:bg-secondary/[0.7]"
-        />
+        <Button onClick={generateInvoice}>Open PDF</Button>
       </CardFooter>
     </Card>
   );

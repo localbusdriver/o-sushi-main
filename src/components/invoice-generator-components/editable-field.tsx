@@ -1,26 +1,29 @@
+import React from "react";
+
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
-const EditableField = ({
+type CellDataType = {
+  type: string;
+  name: string;
+  placeholder?: string;
+  value: string;
+  id: string;
+  leading?: string;
+  min?: number;
+  step?: string;
+  textAlign?: string;
+};
+
+function EditableField({
   cellData,
   onItemizedItemEdit,
   className,
 }: {
-  cellData: {
-    type: string;
-    name: string;
-    placeholder?: string;
-    value: string;
-    id: string;
-    leading?: string;
-    min?: number;
-    step?: string;
-    textAlign?: string;
-  };
+  cellData: CellDataType;
   className?: string;
   onItemizedItemEdit: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}) => {
-  console.log(cellData);
+}) {
   return (
     <div
       id="Editable-Field"
@@ -51,6 +54,6 @@ const EditableField = ({
       />
     </div>
   );
-};
+}
 
-export default EditableField;
+export default React.memo(EditableField);

@@ -22,22 +22,22 @@ import {
 import { formatDecimal } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
-// const GenerateInvoice = () => {
-//   html2canvas(document.querySelector("#invoiceCapture")).then((canvas) => {
-//     const imgData = canvas.toDataURL("image/png", 1.0);
-//     const pdf = new jsPDF({
-//       orientation: "portrait",
-//       unit: "pt",
-//       format: [612, 792],
-//     });
-//     pdf.internal.scaleFactor = 1;
-//     const imgProps = pdf.getImageProperties(imgData);
-//     const pdfWidth = pdf.internal.pageSize.getWidth();
-//     const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-//     pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-//     pdf.save("invoice-001.pdf");
-//   });
-// };
+const GenerateInvoice = () => {
+  html2canvas(document.querySelector("#invoiceCapture")).then((canvas) => {
+    const imgData = canvas.toDataURL("image/png", 1.0);
+    const pdf = new jsPDF({
+      orientation: "portrait",
+      unit: "pt",
+      format: [612, 792],
+    });
+    pdf.internal.scaleFactor = 1;
+    const imgProps = pdf.getImageProperties(imgData);
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+    pdf.save("invoice-001.pdf");
+  });
+};
 
 type InvoiceModalProps = {
   billingInfo: BillingInfoType;
@@ -68,78 +68,102 @@ const InvoiceModal = ({
   return (
     <Dialog>
       <DialogTrigger className={cn("", className)}>Finalise</DialogTrigger>
-      <DialogContent>
+      <DialogContent className="max-w-3xl">
         <div id="invoiceCapture">
-          <div className="w-100 flex flex-row items-start justify-between bg-white/[0.5] p-4">
-            <div className="w-100">
-              <h4 className="my-2 font-bold">{billFrom || "Mikyung Wee"}</h4>
-              <h6 className="mb-1 font-bold text-secondary">
+          <div
+            className="flex flex-row items-start justify-between bg-white/[0.5] p-4"
+            id="invoice information"
+          >
+            <div className="">
+              <h4 className="my-2 font-bold">{billFrom || "JPMK Ltd"}</h4>
+              <h6 className="mb-1 font-bold">
                 Invoice Number: {invoiceNumber || ""}
               </h6>
+              <div className="flex flex-row gap-2">
+                <h6>
+                  {" "}
+                  <span className="mt-2 font-bold">Date Of Issue:</span>&nbsp;
+                  <span className="">
+                    {dateOfIssue || new Date().toLocaleDateString()}
+                  </span>
+                </h6>
+              </div>
             </div>
-            <div className="ms-4 text-end">
-              <h6 className="mb-2 mt-1 font-bold">Amount&nbsp;Due:</h6>
-              <h5 className="font-bold text-secondary">
-                {" "}
-                {currency} {formatDecimal(total)}
-              </h5>
+            <div className="ms-4 inline-flex flex-row items-center gap-2 text-end">
+              <h6 className="font-bold">
+                <span>Amount&nbsp;Due:</span>&nbsp;
+                <span>
+                  {currency}
+                  {formatDecimal(total)}
+                </span>
+              </h6>
             </div>
           </div>
+
           <div className="p-4">
-            <div className="mb-4 flex flex-row">
+            <div className="mb-4 flex flex-row flex-wrap gap-10" id="billing">
               <div className="flex flex-col">
                 <div className="font-bold">Billed From:</div>
-                <div>{billFrom || ""}</div>
-                <div>{billFromAddress || ""}</div>
-                <div>{billFromEmail || ""}</div>
+                <div>{billFrom || "Mikyung Wee"}</div>
+                <div>{billFromAddress || "100 Rithiford Street, Newtown"}</div>
+                <div>{billFromEmail || "weemikyung@hotmail.com"}</div>
               </div>
               <div className="flex flex-col">
                 <div className="font-bold">Billed to:</div>
-                <div>{billTo || ""}</div>
-                <div>{billToAddress || ""}</div>
-                <div>{billToEmail || ""}</div>
-              </div>
-              <div className="flex flex-col">
-                <div className="mt-2 font-bold">Date Of Issue:</div>
-                <div>{dateOfIssue || ""}</div>
+                <div>{billTo || "John Doe"}</div>
+                <div>{billToAddress || "100 Example Address, Suburb"}</div>
+                <div>{billToEmail || "example@example.com"}</div>
               </div>
             </div>
-            <table className="mb-0">
-              <thead>
-                <tr>
-                  <th>QTY</th>
-                  <th>DESCRIPTION</th>
-                  <th className="text-end">PRICE</th>
-                  <th className="text-end">AMOUNT</th>
-                </tr>
-              </thead>
-              <tbody>
-                {items.map((item, i) => {
-                  return (
-                    <tr id={i.toString()} key={i}>
-                      <td style={{ width: "70px" }}>{item.quantity}</td>
-                      <td>
+
+            <div className="mb-0 mt-4 grid grid-cols-12 gap-y-2" id="table">
+              <div className="col-span-12 row-span-1 grid grid-cols-12 font-bold">
+                <div className="col-span-1 w-16 text-center">
+                  <h3>QTY</h3>
+                </div>
+                <div className="col-span-7">
+                  <h3>DESCRIPTION</h3>
+                </div>
+                <div className="col-span-2 w-20 text-end">
+                  <h3>PRICE</h3>
+                </div>
+                <div className="col-span-2 text-end">
+                  <h3>AMOUNT</h3>
+                </div>
+              </div>
+
+              {items.map((item, i) => {
+                return (
+                  <div
+                    id={i.toString()}
+                    key={i}
+                    className="col-span-12 row-span-1 grid grid-cols-12"
+                  >
+                    <div className="col-span-1 w-16 text-center">
+                      <p>{item.quantity}</p>
+                    </div>
+                    <div className="col-span-7">
+                      <p>
                         {item.name} - {item.description}
-                      </td>
-                      <td className="text-end" style={{ width: "100px" }}>
+                      </p>
+                    </div>
+                    <div className="col-span-2 w-20 text-end">
+                      <p>
                         {currency} {item.price}
-                      </td>
-                      <td className="text-end" style={{ width: "100px" }}>
+                      </p>
+                    </div>
+                    <div className="col-span-2 text-end">
+                      <p>
                         {currency} {item.price * item.quantity}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-            <table>
-              <tbody>
-                <tr>
-                  <td>&nbsp;</td>
-                  <td>&nbsp;</td>
-                  <td>&nbsp;</td>
-                </tr>
-                <tr className="text-end">
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="mt-8 space-y-2">
+              <div>
+                <div className="text-end">
                   <td></td>
                   <td className="font-bold" style={{ width: "100px" }}>
                     SUBTOTAL
@@ -147,7 +171,7 @@ const InvoiceModal = ({
                   <td className="text-end" style={{ width: "100px" }}>
                     {currency} {formatDecimal(subTotal)}
                   </td>
-                </tr>
+                </div>
                 {formatDecimal(taxAmount) != 0.0 && (
                   <tr className="text-end">
                     <td></td>
@@ -160,7 +184,7 @@ const InvoiceModal = ({
                   </tr>
                 )}
                 {formatDecimal(discountAmount) != 0.0 && (
-                  <tr className="text-end">
+                  <div className="text-end">
                     <td></td>
                     <td className="font-bold" style={{ width: "100px" }}>
                       DISCOUNT
@@ -168,9 +192,9 @@ const InvoiceModal = ({
                     <td className="text-end" style={{ width: "100px" }}>
                       {currency} {formatDecimal(discountAmount)}
                     </td>
-                  </tr>
+                  </div>
                 )}
-                <tr className="text-end">
+                <div className="text-end">
                   <td></td>
                   <td className="font-bold" style={{ width: "100px" }}>
                     TOTAL
@@ -178,9 +202,9 @@ const InvoiceModal = ({
                   <td className="text-end" style={{ width: "100px" }}>
                     {currency} {formatDecimal(total)}
                   </td>
-                </tr>
-              </tbody>
-            </table>
+                </div>
+              </div>
+            </div>
             {notes && (
               <div className="rounded bg-white/[0.5] px-4 py-3">{notes}</div>
             )}

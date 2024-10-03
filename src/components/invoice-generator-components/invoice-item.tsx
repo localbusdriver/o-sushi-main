@@ -1,24 +1,25 @@
+import React from "react";
+
 import { Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import type { Item } from "@/lib/types/invoice-generator-types";
 
 import EditableField from "./editable-field";
 
 type InvoiceItemProps = {
-  items: any[];
+  items: Item[];
   onItemizedItemEdit: (evt: React.ChangeEvent<HTMLInputElement>) => void;
-  currency?: string;
   onRowDel: (item: any) => void;
   onRowAdd: () => void;
 };
 
-const InvoiceItem = ({
+function InvoiceItem({
   items,
   onItemizedItemEdit,
-  currency,
   onRowDel,
   onRowAdd,
-}: InvoiceItemProps) => {
+}: InvoiceItemProps) {
   return (
     <div id="Invoice-Item" className="sm:max-w-[747px]">
       <div className="grid grid-cols-11 gap-y-2">
@@ -34,7 +35,6 @@ const InvoiceItem = ({
             item={item}
             onItemizedItemEdit={onItemizedItemEdit}
             onDelEvent={onRowDel}
-            currency={currency}
           />
         ))}
       </div>
@@ -43,24 +43,18 @@ const InvoiceItem = ({
       </Button>
     </div>
   );
-};
+}
 
 type ItemRowProps = {
   item: any;
   onItemizedItemEdit: (evt: React.ChangeEvent<HTMLInputElement>) => void;
-  currency?: string;
   onDelEvent: (item: any) => void;
 };
 
-const ItemRow = ({
-  item,
-  onItemizedItemEdit,
-  onDelEvent,
-  currency,
-}: ItemRowProps) => {
-  const handleDelete = () => {
+function ItemRow({ item, onItemizedItemEdit, onDelEvent }: ItemRowProps) {
+  const handleDelete = React.useCallback(() => {
     onDelEvent(item);
-  };
+  }, [item, onDelEvent]);
 
   return (
     <>
@@ -72,7 +66,7 @@ const ItemRow = ({
               type: "text",
               name: "name",
               placeholder: "Item name",
-              value: item.name,
+              value: item.name.toString(),
               id: item.id,
             }}
           />
@@ -85,7 +79,7 @@ const ItemRow = ({
               name: "quantity",
               min: 1,
               step: "1",
-              value: item.quantity,
+              value: item.quantity.toString(),
               id: item.id,
             }}
           />
@@ -100,7 +94,7 @@ const ItemRow = ({
               min: 1,
               step: "0.01",
               textAlign: "text-end",
-              value: item.price,
+              value: item.price.toString(),
               id: item.id,
             }}
           />
@@ -119,13 +113,13 @@ const ItemRow = ({
             type: "text",
             name: "description",
             placeholder: "Item description",
-            value: item.description,
+            value: item.description.toString(),
             id: item.id,
           }}
         />
       </div>
     </>
   );
-};
+}
 
 export default InvoiceItem;
