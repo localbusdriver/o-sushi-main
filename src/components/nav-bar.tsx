@@ -1,5 +1,6 @@
 "use server";
 
+import { Route } from "next";
 import Link from "next/link";
 import { FC } from "react";
 
@@ -13,11 +14,11 @@ const NavBar: FC = async () => {
       </Link>
 
       <div className="flex flex-row items-center gap-8">
-        <Link href="/menu" className="nav-btn">
-          menu
+        <Link href={"/menu" as Route} className="nav-btn">
+          Menu
         </Link>
-        <Link href="/about" className="nav-btn">
-          about
+        <Link href={"/about" as Route} className="nav-btn">
+          About
         </Link>
 
         <Button

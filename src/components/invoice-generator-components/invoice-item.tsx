@@ -78,7 +78,7 @@ function ItemRow({ item, onItemizedItemEdit, onDelEvent }: ItemRowProps) {
               type: "number",
               name: "quantity",
               min: 1,
-              step: "1",
+              step: 1,
               value: item.quantity.toString(),
               id: item.id,
             }}
@@ -91,8 +91,7 @@ function ItemRow({ item, onItemizedItemEdit, onDelEvent }: ItemRowProps) {
               leading: "$",
               type: "number",
               name: "price",
-              min: 1,
-              step: "0.01",
+              step: 0.1,
               textAlign: "text-end",
               value: item.price.toString(),
               id: item.id,

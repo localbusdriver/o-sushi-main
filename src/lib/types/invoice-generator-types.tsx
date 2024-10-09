@@ -35,3 +35,10 @@ export type TotalType = {
   discountRate: Decimal;
   discountAmount: Decimal;
 };
+
+export type InvoiceDataType = {
+  paymentDetails: PaymentDetailsType;
+  billingInfo: BillingInfoType;
+  items: Item[];
+  finalNumbers: TotalType;
+};

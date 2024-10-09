@@ -20,12 +20,24 @@ export async function middleware(req: NextRequest) {
 
   const isPublicPath = publicPaths.some((path) => pathname.startsWith(path));
 
-  if (pathname === "/") {
-    return NextResponse.redirect(new URL("/home", req.url));
+  if (pathname === "/" || isPublicPath) {
+    return NextResponse.redirect(new URL("/protected", req.url));
   }
 
   if (pathname === "/login" && validToken) {
     return NextResponse.redirect(new URL("/protected/main", req.url));
+  }
+
+  if (isPublicPath) {
+    return NextResponse.next();
+  }
+
+  if (pathname === "/protected") {
+    return NextResponse.redirect(new URL("/protected/main", req.url));
+  }
+
+  if (pathname.startsWith("/protected")) {
+    return NextResponse.next();
   }
 
   if (pathname.startsWith("/protected")) {

@@ -3,8 +3,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import { Decimal } from "decimal.js";
-import html2canvas from "html2canvas";
-import { jsPDF } from "jspdf";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -24,30 +22,10 @@ import {
 } from "@/lib/types/invoice-generator-types";
 import { formatDecimal } from "@/lib/utils";
 
+import GenerateInvoice from "./generator/generate-invoice-button";
 import InvoiceItem from "./invoice-item";
 
 const InvoiceForm: React.FC<{ currentDate?: string }> = ({ currentDate }) => {
-  const generateInvoice = () => {
-    const captureElement: HTMLElement | null =
-      document.getElementById("invoice-capture");
-    if (!captureElement) return;
-    html2canvas(captureElement).then((canvas) => {
-      const imgData = canvas.toDataURL("image/png", 1.0);
-      const pdf = new jsPDF({
-        orientation: "portrait",
-        unit: "pt",
-        format: [612, 792],
-      });
-      pdf.internal.scaleFactor = 1;
-      const imgProps = pdf.getImageProperties(imgData);
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-      window.open(pdf.output("bloburl"), "_blank");
-      // pdf.save("invoice-001.pdf");
-    });
-  };
-
   const itemIdCounterRef = useRef(0);
   const generateItemId = useCallback(() => {
     itemIdCounterRef.current += 1;
@@ -66,7 +44,7 @@ const InvoiceForm: React.FC<{ currentDate?: string }> = ({ currentDate }) => {
       id: generateItemId(),
       name: "",
       description: "",
-      price: "1.00",
+      price: "0.00",
       quantity: 1,
     },
   ]);
@@ -74,7 +52,7 @@ const InvoiceForm: React.FC<{ currentDate?: string }> = ({ currentDate }) => {
   const [final, setFinal] = useState<TotalType>({
     total: new Decimal(0),
     subTotal: new Decimal(0),
-    taxRate: new Decimal(0),
+    taxRate: new Decimal(15),
     taxAmount: new Decimal(0),
     discountRate: new Decimal(0),
     discountAmount: new Decimal(0),
@@ -194,7 +172,7 @@ const InvoiceForm: React.FC<{ currentDate?: string }> = ({ currentDate }) => {
                     invoiceNumber: parseInt(e.target.value),
                   }));
                 }}
-                min="1"
+                min={1}
                 className="max-w-[70px]"
                 required
               />
@@ -359,10 +337,9 @@ const InvoiceForm: React.FC<{ currentDate?: string }> = ({ currentDate }) => {
           </CardContent>
         </Card>
         <SidePanel
-          final={final}
+          data={{ final, modifiers, billingInfo, items }}
           setFinal={setFinal}
           handleCalculateTotal={handleCalculateTotal}
-          generateInvoice={generateInvoice}
         />
       </div>
     </div>
@@ -372,16 +349,19 @@ const InvoiceForm: React.FC<{ currentDate?: string }> = ({ currentDate }) => {
 export default InvoiceForm;
 
 type SidePanelProps = {
-  final: TotalType;
   setFinal: React.Dispatch<React.SetStateAction<TotalType>>;
   handleCalculateTotal: () => void;
-  generateInvoice: () => void;
+  data: {
+    final: TotalType;
+    modifiers: PaymentDetailsType;
+    billingInfo: BillingInfoType;
+    items: Item[];
+  };
 };
 const SidePanel = ({
-  final,
+  data,
   setFinal,
   handleCalculateTotal,
-  generateInvoice,
 }: SidePanelProps) => {
   return (
     <Card className="mx-auto flex h-fit max-w-max flex-col lg:fixed lg:right-24 lg:top-28">
@@ -394,10 +374,10 @@ const SidePanel = ({
               <Input
                 name="taxRate"
                 type="number"
-                value={formatDecimal(final.taxRate)}
+                value={formatDecimal(data.final.taxRate)}
                 onChange={(e) => {
                   setFinal({
-                    ...final,
+                    ...data.final,
                     taxRate: new Decimal(e.target.value),
                   });
                   handleCalculateTotal();
@@ -420,10 +400,10 @@ const SidePanel = ({
                 name="discountRate"
                 id="discountRate"
                 type="number"
-                value={formatDecimal(final.discountRate)}
+                value={formatDecimal(data.final.discountRate)}
                 onChange={(e) => {
                   setFinal({
-                    ...final,
+                    ...data.final,
                     discountRate: new Decimal(e.target.value),
                   });
                   handleCalculateTotal();
@@ -445,7 +425,12 @@ const SidePanel = ({
         </div>
       </CardContent>
       <CardFooter className="flex items-center justify-center">
-        <Button onClick={generateInvoice}>Open PDF</Button>
+        <GenerateInvoice
+          paymentDetails={data.modifiers}
+          billingInfo={data.billingInfo}
+          items={data.items}
+          finalNumbers={data.final}
+        />
       </CardFooter>
     </Card>
   );

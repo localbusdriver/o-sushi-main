@@ -56,7 +56,7 @@ const ProtectedNav = () => {
       <motion.nav
         initial={{
           opacity: 1,
-          y: -100,
+          y: 0,
         }}
         animate={{
           y: visible ? 0 : -100,

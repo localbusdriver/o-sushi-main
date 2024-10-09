@@ -11,7 +11,7 @@ type CellDataType = {
   id: string;
   leading?: string;
   min?: number;
-  step?: string;
+  step?: number;
   textAlign?: string;
 };
 
