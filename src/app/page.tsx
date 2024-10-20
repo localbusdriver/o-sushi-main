@@ -1,13 +1,12 @@
-"use server";
-
+"use server"
 import { FC } from "react";
 
-const Home: FC = () => {
+const Home:FC = () => {
   return (
-    <main className="h-screen text-center">
-      <h1>Redirecting...</h1>
+    <main className="text-center h-screen">
+      <h1>Redirecting...</h1> 
     </main>
   );
-};
+}
 
-export default Home;
+export default Home
