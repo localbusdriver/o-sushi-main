@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-
 import { SignJWT } from "jose";
 
 export async function POST(req: NextRequest) {

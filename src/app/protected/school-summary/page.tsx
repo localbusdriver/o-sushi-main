@@ -1,19 +1,12 @@
 "use client";
-
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FC } from "react";
-
-import DoubleOrders from "@/components/school-summary-components/doubles-result";
-import SummaryTable from "@/components/school-summary-components/summary-table";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import type {
-  Doubles,
-  Info,
-  Items,
-  Summary,
-} from "@/lib/types/school-summary-types";
+import { Input } from "@/components/ui/input";
+import SummaryTable from "./components/SummaryTable";
+import DoubleOrders from "./components/DoublesResult";
+import { Items, Summary, Doubles, Info } from "./types";
 
 const pricing = {};
 
@@ -21,10 +14,7 @@ const Page: FC = () => {
   const [file, setFile] = useState<string>("");
   const [summary, setSummary] = useState<Summary | null>(null);
   const [doubles, setDoubles] = useState<Doubles | null>(null);
-  const [info, setInfo] = useState<Info>({
-    date: new Date().toDateString(),
-    totalPrice: 0,
-  });
+  const [info, setInfo] = useState<Info>({ date: "", totalPrice: 0 });
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const fullFile = e.target.files?.[0];
 
@@ -39,13 +29,13 @@ const Page: FC = () => {
   };
 
   const clearContent = () => {
+    console.log(file);
+    console.log(summary);
     setFile("");
     setSummary(null);
     setDoubles(null);
     (document.getElementById("customFile") as HTMLInputElement).value = "";
   };
-
-  useEffect(() => {}, []);
 
   useEffect(() => {
     if (!file) {
@@ -72,6 +62,9 @@ const Page: FC = () => {
         const organization = line[22];
 
         temp.totalPrice += cost ? parseFloat(cost) : 0;
+
+        console.log(cost);
+        console.log(temp.totalPrice);
 
         if (parseInt(quantity) > 1) {
           tempDoubles[i.toString()] = {
@@ -125,27 +118,18 @@ const Page: FC = () => {
         };
       });
 
+      console.log(temp);
       setSummary(res);
-      setInfo({
-        ...temp,
-        date: date,
-        totalPrice: Math.round(temp.totalPrice * 100) / 100,
-      });
+      setInfo({ ...temp, totalPrice: Math.round(temp.totalPrice * 100) / 100 });
+
+      console.log(info);
     }
   }, [file]);
 
   return (
     <section className="page">
       <div className="flex flex-col justify-start gap-2">
-        <div id="" className="flex items-center justify-start gap-8">
-          <h1 className="text-left text-3xl">School Summary</h1>
-          {info.date && (
-            <div className="w-fit space-y-1 rounded border bg-accent p-2 text-left">
-              <p>{info.date}</p>
-              <p>{info.totalPrice > 0 ? `$${info.totalPrice}` : ""}</p>
-            </div>
-          )}
-        </div>
+        <h1 className="text-left">School Summary</h1>
 
         <Label htmlFor="customFile">
           &nbsp;Upload a&nbsp;
@@ -154,7 +138,7 @@ const Page: FC = () => {
           <span className="text-[hsl(var(--excel-green))]">Excel</span>
           &nbsp;file&nbsp;
         </Label>
-        <div className="flex w-full flex-row items-center justify-between">
+        <div className="w-full flex flex-row justify-between items-center">
           <div className="flex flex-row gap-2">
             <Input
               type="file"
@@ -167,6 +151,11 @@ const Page: FC = () => {
               Clear
             </Button>
           </div>
+
+          {info.date && <div className="p-2 bg-accent border rounded w-fit space-y-1 text-left">
+            <p>{info.date}</p>
+            <p>{info.totalPrice > 0 ? "$" + info.totalPrice : ""}</p>
+          </div>}
         </div>
       </div>
       <div className="flex flex-row justify-between gap-4">
