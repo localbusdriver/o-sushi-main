@@ -5,7 +5,7 @@ export async function POST() {
     { message: "Logged out successfully" },
     { status: 200 }
   );
-  
+
   // Clear the token cookie
   response.cookies.set("token", "", {
     httpOnly: true,

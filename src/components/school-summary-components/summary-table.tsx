@@ -3,21 +3,24 @@ import {
   TableBody,
   TableCaption,
   TableCell,
+  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
-  TableFooter,
 } from "@/components/ui/table";
-import type { Summary } from "../types";
+import type { Summary } from "@/lib/types/school-summary-types";
 
 const SummaryTable = ({ results }: { results: Summary | null }) => {
   return (
-    <div className="mt-8 ">
-      <Table className="w-96 border border-black mx-auto">
+    <div className="mt-8">
+      <Table className="mx-auto w-96 border border-black">
         <TableCaption>Report Summary</TableCaption>
         <TableHeader>
           <TableRow>
-            <TableCell colSpan={4} className="text-primary font-bold text-center">
+            <TableCell
+              colSpan={4}
+              className="text-center font-bold text-primary"
+            >
               Order Summary
             </TableCell>
           </TableRow>
