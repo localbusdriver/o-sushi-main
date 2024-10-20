@@ -28,12 +28,7 @@ export type BillingInfoType = {
 
 // final
 export type TotalType = {
-  total: Decimal;
-  subTotal: Decimal;
-  taxRate: Decimal;
-  taxAmount: Decimal;
-  discountRate: Decimal;
-  discountAmount: Decimal;
+  [key: string]: Decimal;
 };
 
 export type InvoiceDataType = {

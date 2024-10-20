@@ -39,8 +39,6 @@ const Page: FC = () => {
   };
 
   const clearContent = () => {
-    console.log(file);
-    console.log(summary);
     setFile("");
     setSummary(null);
     setDoubles(null);
@@ -74,9 +72,6 @@ const Page: FC = () => {
         const organization = line[22];
 
         temp.totalPrice += cost ? parseFloat(cost) : 0;
-
-        console.log(cost);
-        console.log(temp.totalPrice);
 
         if (parseInt(quantity) > 1) {
           tempDoubles[i.toString()] = {

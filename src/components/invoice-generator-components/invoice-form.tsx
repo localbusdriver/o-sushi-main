@@ -76,9 +76,7 @@ const InvoiceForm: React.FC<{ currentDate?: string }> = ({ currentDate }) => {
     let newdiscountAmount: Decimal = newSubTotal.times(
       final.discountRate.dividedBy(100)
     );
-    let newTotal: Decimal = newSubTotal
-      .minus(newdiscountAmount)
-      .plus(newtaxAmount);
+    let newTotal: Decimal = newSubTotal.minus(newdiscountAmount);
 
     setFinal((final) => ({
       ...final,
@@ -123,10 +121,6 @@ const InvoiceForm: React.FC<{ currentDate?: string }> = ({ currentDate }) => {
     });
     setItems(updatedItems);
   };
-
-  useEffect(() => {
-    console.log("items", items);
-  }, [items]);
 
   return (
     <div id="">
@@ -287,29 +281,37 @@ const InvoiceForm: React.FC<{ currentDate?: string }> = ({ currentDate }) => {
                   <span className="font-bold">Subtotal:</span>&nbsp;
                   <span>
                     {modifiers.currency}
-                    {formatDecimal(final.subTotal)}
+                    {Math.round(formatDecimal(final.subTotal) * 100) / 100}
                   </span>
                 </div>
                 <div className="flex flex-row items-start justify-between">
                   <span className="font-bold">Discount:</span>&nbsp;
                   <span>
                     <span className="text-small">
-                      ({formatDecimal(final.discountRate) || 0}%)
+                      (
+                      {Math.round(formatDecimal(final.discountRate) * 100) /
+                        100 || 0}
+                      %)
                     </span>
                     &nbsp;
                     {modifiers.currency}
-                    {formatDecimal(final.discountAmount) || 0}
+                    {Math.round(formatDecimal(final.discountAmount) * 100) /
+                      100 || 0}
                   </span>
                 </div>
                 <div className="flex flex-row items-start justify-between">
                   <span className="font-bold">Tax:</span>&nbsp;
                   <span>
                     <span className="text-small">
-                      ({formatDecimal(final.taxRate) || 0}%)
+                      (
+                      {Math.round(formatDecimal(final.taxRate) * 100) / 100 ||
+                        0}
+                      %)
                     </span>
                     &nbsp;
                     {modifiers.currency}
-                    {formatDecimal(final.taxAmount) || 0}
+                    {Math.round(formatDecimal(final.taxAmount) * 100) / 100 ||
+                      0}
                   </span>
                 </div>
                 <hr />
@@ -317,7 +319,7 @@ const InvoiceForm: React.FC<{ currentDate?: string }> = ({ currentDate }) => {
                   <span className="font-bold">Total:</span>&nbsp;
                   <span className="font-bold">
                     {modifiers.currency}
-                    {formatDecimal(final.total) || 0}
+                    {Math.round(formatDecimal(final.total) * 100) / 100 || 0}
                   </span>
                 </div>
               </div>
