@@ -1,39 +1,39 @@
 import { Decimal } from "decimal.js";
 
 export type Item = {
-  id: string;
-  name: string;
-  description: string;
-  price: string;
-  quantity: number;
+    id: string;
+    name: string;
+    description: string;
+    price: string;
+    quantity: number;
 };
 
 // modifiers
 export type PaymentDetailsType = {
-  currency: string;
-  invoiceNumber: number;
-  dateOfIssue: string;
-  notes: string;
+    currency: string;
+    invoiceNumber: number;
+    dateOfIssue: string;
+    notes: string;
 };
 
 // billing info
 export type BillingInfoType = {
-  billTo: string;
-  billToEmail: string;
-  billToAddress: string;
-  billFrom: string;
-  billFromEmail: string;
-  billFromAddress: string;
+    billTo: string;
+    billToEmail: string;
+    billToAddress: string;
+    billFrom: string;
+    billFromEmail: string;
+    billFromAddress: string;
 };
 
 // final
 export type TotalType = {
-  [key: string]: Decimal;
+    [key: string]: Decimal;
 };
 
 export type InvoiceDataType = {
-  paymentDetails: PaymentDetailsType;
-  billingInfo: BillingInfoType;
-  items: Item[];
-  finalNumbers: TotalType;
+    paymentDetails: PaymentDetailsType;
+    billingInfo: BillingInfoType;
+    items: Item[];
+    finalNumbers: TotalType;
 };

@@ -18,5 +18,5 @@
         "^[./]"
     ],
     "importOrderSeparation": true,
-    "importOrderSpecifiers": true
+    "importOrderSortSpecifiers": true
 }

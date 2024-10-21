@@ -6,20 +6,20 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "O'Sushi",
-  description: "The best sushi in town!",
+    title: "O'Sushi",
+    description: "The best sushi in town!",
 };
 
 export default function RootLayout({
-  children,
+    children,
 }: Readonly<{
-  children: React.ReactNode;
+    children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en">
-      <body className={inter.className}>
-        <main className="">{children}</main>
-      </body>
-    </html>
-  );
+    return (
+        <html lang="en">
+            <body className={inter.className}>
+                <main className="">{children}</main>
+            </body>
+        </html>
+    );
 }
