@@ -10,31 +10,56 @@ export function formatDecimal(decimal: Decimal) {
     return decimal.toNumber();
 }
 
-const kindoAPI = "https://shop.tgcl.co.nz/shop/tgweb.aspx";
-const cookieEnding =
-    "_ga=GA1.1.1186274636.1732047157; thegrowthcollectivelimited-_zldp=enAQevcBCesINGz8lqNBlOjx8MjRoiW%2FcCoQlPqKqAy0VVpix3EO%2FbwEDN5%2BhEPbIRgzEMc8DME%3D; thegrowthcollectivelimited-_zldt=2fef66af-044b-4863-9b92-d658f0441615-1; isiframeenabled=true; _ga_3Z8BTZRZE4=GS1.1.1732050158.2.1.1732050160.0.0.0";
-
 export const fetchKindoAPI = async ({
     path,
     method,
     contentType,
     referer,
     cookie,
+    body,
+    Credentials,
 }: {
     path: string;
-    method: string;
+    method: "GET" | "POST";
     contentType?: string;
     referer?: string;
     cookie?: string;
+    body?: { [key: string]: string | undefined };
+    Credentials?: string;
 }) => {
-    const response = await fetch(`${kindoAPI}/${path}`, {
-        headers: {
-            Method: method,
-            Cookie: cookie + cookieEnding,
-            "Content-Type": contentType || "application/json",
-            Referer: referer || "",
-        },
-    });
+    if (!process.env.KINDO_API_URL) {
+        throw new Error("KINDO_API_URL is not defined. Check env.");
+    }
 
-    return response;
+    const headers: { [key: string]: string } = {
+        "Content-Type": contentType || "application/json",
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        Pragma: "no-cache",
+        "User-Agent":
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    };
+    referer && (headers["Referer"] = referer);
+    cookie && (headers["Cookie"] = cookie + process.env.KINDO_COOKIE_ENDING);
+
+    const endpoint = `${process.env.KINDO_API_URL}${path}`;
+    const fetchOptions: RequestInit = {
+        method: method,
+        headers: headers,
+        credentials: "include",
+    };
+    if (body && method === "POST") {
+        if (contentType?.includes("x-www-form-urlencoded")) {
+            const cleanBody: Record<string, string> = {};
+            Object.entries(body).forEach(([key, value]) => {
+                if (value !== undefined) {
+                    cleanBody[key] = value;
+                }
+            });
+            fetchOptions.body = new URLSearchParams(cleanBody).toString();
+        } else {
+            fetchOptions.body = JSON.stringify(body);
+        }
+    }
+
+    return await fetch(endpoint, fetchOptions);
 };
