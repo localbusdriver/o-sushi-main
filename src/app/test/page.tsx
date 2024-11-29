@@ -4,6 +4,9 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 
+import SummaryTable from "@/components/school-summary-components/summary-table";
+
+import type { Summary } from "@/lib/types/school-summary-types";
 import { cn } from "@/lib/utils";
 
 import { useToast } from "@/hooks/use-toast";
@@ -13,7 +16,7 @@ const Page = () => {
     const [session, setSession] = useState<string | null>(null);
     const [date, setDate] = useState<Date | null>(new Date());
     const [loading, setLoading] = useState<boolean>(false);
-    const [orders, setOrders] = useState({});
+    const [orders, setOrders] = useState<Summary | null>(null);
     const [doubles, setDoubles] = useState([]);
 
     const getSessions = async () => {
@@ -56,7 +59,6 @@ const Page = () => {
         }
 
         const targetDate = date?.toISOString().split("T")[0];
-        console.log(targetDate);
 
         const response = await fetch("/api/kindo/get-orders", {
             method: "POST",
@@ -65,7 +67,7 @@ const Page = () => {
                 "Cache-Control": "no-cache",
                 Pragma: "no-cache",
             },
-            body: JSON.stringify({ targetDate: date, cookies: session }),
+            body: JSON.stringify({ targetDate: targetDate, cookies: session }),
         });
 
         if (!response.ok) {
@@ -144,7 +146,6 @@ const Page = () => {
                     Get Doubles
                 </Button>
             </div>
-
             <div className="flex items-center justify-center gap-4">
                 <div className="flex items-center gap-2">
                     <div
@@ -154,8 +155,15 @@ const Page = () => {
                         )}
                     />
                     <span>
-                        {`${session?.slice(29, 39)}...` || "No session"}
+                        {(session && `${session.slice(29, 39)}`) ||
+                            "No session"}
+                        ...
                     </span>
+                </div>
+            </div>
+            <div className="flex justify-center rounded-lg bg-slate-400 p-4 shadow-lg">
+                <div className="min-h-[400px] w-[400px] px-4 py-3">
+                    <SummaryTable results={orders} />
                 </div>
             </div>
         </div>

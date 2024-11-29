@@ -1,4 +1,4 @@
-export interface Items {
+export interface Doubles {
     member?: string;
     roomNumber?: string;
     item?: string;
@@ -7,13 +7,9 @@ export interface Items {
     noDoubles?: string;
 }
 
-export interface Doubles {
-    [key: string]: Items;
-}
-
 export interface Summary {
-    [key: string]: { pieces: number; rolls: number };
-    Total: { pieces: number; rolls: number };
+    [key: string]: number;
+    Total: number;
 }
 
 export type Info = {

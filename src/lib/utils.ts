@@ -17,7 +17,6 @@ export const fetchKindoAPI = async ({
     referer,
     cookie,
     body,
-    Credentials,
 }: {
     path: string;
     method: "GET" | "POST";
@@ -25,7 +24,6 @@ export const fetchKindoAPI = async ({
     referer?: string;
     cookie?: string;
     body?: { [key: string]: string | undefined };
-    Credentials?: string;
 }) => {
     if (!process.env.KINDO_API_URL) {
         throw new Error("KINDO_API_URL is not defined. Check env.");
