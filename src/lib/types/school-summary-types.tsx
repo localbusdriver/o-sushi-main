@@ -1,13 +1,12 @@
-export interface Doubles {
-    member?: string;
-    roomNumber?: string;
-    item?: string;
-    quantity?: number;
-    organization?: string;
-    noDoubles?: string;
+export interface DoublesType {
+    item: string;
+    quantity: number;
+    student: string;
+    school: string;
+    roomNumber: string;
 }
 
-export interface Summary {
+export interface SummaryType {
     [key: string]: number;
     Total: number;
 }

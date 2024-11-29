@@ -41,6 +41,8 @@ function parseSushiTable(htmlString: string): SushiOrder {
 
 export async function POST(req: NextRequest) {
     const { targetDate, cookies } = await req.json();
+    console.log(targetDate);
+
     const path = `?path=/supplier/osushi/production_list&target_date=${targetDate}&production_list_name=&format=html&all_suppliers=true`;
     const referer = `https://shop.tgcl.co.nz/shop/supplier.shtml?supplier=osushi&date=${targetDate}&task=production_list`;
 

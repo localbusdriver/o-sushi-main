@@ -9,12 +9,15 @@ import {
     TableRow,
 } from "@/components/ui/table";
 
-import type { Summary } from "@/lib/types/school-summary-types";
+import type {
+    DoublesType,
+    SummaryType,
+} from "@/lib/types/school-summary-types";
 
-const SummaryTable = ({ results }: { results: Summary | null }) => {
+export const SummaryTable = ({ results }: { results: SummaryType | null }) => {
     if (results === null) return null;
     return (
-        <Table className="mx-auto rounded-lg bg-white">
+        <Table className="rounded-lg">
             <TableCaption>Report Summary</TableCaption>
             <TableHeader>
                 <TableRow>
@@ -77,4 +80,59 @@ const SummaryTable = ({ results }: { results: Summary | null }) => {
     );
 };
 
-export default SummaryTable;
+export const DoublesTable = ({ results }: { results: DoublesType | null }) => {
+    if (results === null) {
+        return null;
+    }
+    return (
+        <Table className="rounded-lg">
+            <TableCaption>Double Orders</TableCaption>
+            <TableHeader>
+                <TableRow>
+                    <TableCell
+                        colSpan={6}
+                        className="text-center font-bold text-primary"
+                    >
+                        Double Orders
+                    </TableCell>
+                </TableRow>
+                <TableRow>
+                    <TableHead className="w-[100px]" colSpan={2}>
+                        Name
+                    </TableHead>
+                    <TableHead className="text-blue-500">Item</TableHead>
+                    <TableHead className="text-orange-500">Quantity</TableHead>
+                    <TableHead className="text-indigo-500">
+                        Organization
+                    </TableHead>
+                    <TableHead className="text-amber-500">Room no.</TableHead>
+                </TableRow>
+            </TableHeader>
+            <TableBody>
+                {Object.entries(results).map(([key, value]) => (
+                    <TableRow key={key}>
+                        <TableCell
+                            className="font-medium text-green-500"
+                            colSpan={2}
+                        >
+                            {value.student}
+                        </TableCell>
+                        <TableCell className="flex flex-col gap-2 text-blue-500">
+                            <span>{value.item.split(" - ")[0]}</span>
+                            <span>{value.item.split(" - ")[1]}</span>
+                        </TableCell>
+                        <TableCell className="text-orange-500">
+                            {value.quantity}
+                        </TableCell>
+                        <TableCell className="text-indigo-500">
+                            {value.school}
+                        </TableCell>
+                        <TableCell className="text-amber-500">
+                            {value.roomNumber}
+                        </TableCell>
+                    </TableRow>
+                ))}
+            </TableBody>
+        </Table>
+    );
+};
