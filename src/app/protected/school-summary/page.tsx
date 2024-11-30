@@ -1,191 +1,232 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { FC } from "react";
+import Link from "next/link";
+
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { DatePickerWithPresets } from "@/components/ui/date-picker-children";
 
-import DoubleOrders from "@/components/school-summary-components/doubles-result";
-import SummaryTable from "@/components/school-summary-components/summary-table";
+import {
+    DoublesTable,
+    SummaryTable,
+} from "@/components/school-summary-components/summary-table";
 
 import type {
-    Doubles,
-    Info,
-    Items,
-    Summary,
+    DoublesType,
+    SummaryType,
 } from "@/lib/types/school-summary-types";
+import { cn } from "@/lib/utils";
 
-const pricing = {};
+import { useToast } from "@/hooks/use-toast";
 
-const Page: FC = () => {
-    const [file, setFile] = useState<string>("");
-    const [summary, setSummary] = useState<Summary | null>(null);
-    const [doubles, setDoubles] = useState<Doubles | null>(null);
-    const [info, setInfo] = useState<Info>({
-        date: new Date().toDateString(),
-        totalPrice: 0,
-    });
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const fullFile = e.target.files?.[0];
+const Page = () => {
+    const { toast } = useToast();
+    const [session, setSession] = useState<string | null>(null);
+    const [date, setDate] = useState<Date>(new Date());
+    const [loading, setLoading] = useState<{ target: string } | null>(null);
+    const [orders, setOrders] = useState<SummaryType | null>(null);
+    const [doubles, setDoubles] = useState<DoublesType | null>(null);
 
-        if (fullFile) {
-            const reader = new FileReader();
-            reader.onload = (e: ProgressEvent<FileReader>) => {
-                const text = e.target?.result as string;
-                setFile(text);
-            };
-            reader.readAsText(fullFile);
-        }
-    };
-
-    const clearContent = () => {
-        setFile("");
-        setSummary(null);
-        setDoubles(null);
-        (document.getElementById("customFile") as HTMLInputElement).value = "";
-    };
-
-    useEffect(() => {}, []);
-
-    useEffect(() => {
-        if (!file) {
-            setSummary(null);
-            setDoubles(null);
+    const getSessions = async () => {
+        setLoading({ target: "sessions" });
+        const response = await fetch("/api/kindo/get-session", {
+            method: "GET",
+            headers: {
+                "Cache-Control": "no-cache",
+                Pragma: "no-cache",
+            },
+        });
+        if (!response.ok) {
+            setLoading(null);
+            toast({
+                variant: "destructive",
+                title: "Failed to fetch sessions",
+            });
             return;
         }
-        if (file.trim().length > 0) {
-            const lines = file.split("\n").map((line) => line.split(","));
-            lines.shift();
+        const data = await response.json();
+        setSession(data);
+        setLoading(null);
+        toast({
+            title: "[sessions: 200]",
+            description: "Fetched sessions successfully",
+        });
+    };
 
-            const date = lines[0][5];
-            let temp = { date: lines[0][5], totalPrice: 0 };
-
-            let res: Summary = { Total: { pieces: 0, rolls: 0 } };
-            let tempDoubles: Doubles = {};
-            // Member: 0, Location: 1, Item: 6, Quantity: 10, Price: 11, Organization: 22
-            lines.forEach((line, i) => {
-                const member = line[0];
-                const location = line[1];
-                const item = line[6];
-                const quantity = line[10];
-                const cost = line[11];
-                const organization = line[22];
-
-                temp.totalPrice += cost ? parseFloat(cost) : 0;
-
-                if (parseInt(quantity) > 1) {
-                    tempDoubles[i.toString()] = {
-                        member,
-                        roomNumber: location,
-                        item,
-                        quantity: parseInt(quantity),
-                        organization,
-                    };
-                }
-
-                if (item === undefined) {
-                    return;
-                }
-                const [name, amount] = item
-                    .split(" - ")
-                    .map((str) => str.trim());
-                const pieces = parseInt(amount.replace(/[^0-9]/g, ""));
-                const rolls = pieces / 10;
-
-                if (name && name === "Mixed") {
-                    res["Chicken teriyaki"] = {
-                        pieces:
-                            (res["Chicken teriyaki"].pieces || 0) +
-                            Math.floor(pieces / 2),
-                        rolls: (res["Chicken teriyaki"].rolls || 0) + rolls / 2,
-                    };
-                    res["Salmon & Avocado"] = {
-                        pieces:
-                            (res["Salmon & Avocado"].pieces || 0) +
-                            Math.floor(pieces / 2),
-                        rolls: (res["Salmon & Avocado"].rolls || 0) + rolls / 2,
-                    };
-                } else {
-                    res[name] = {
-                        pieces: (res[name]?.pieces || 0) + pieces,
-                        rolls: (res[name]?.rolls || 0) + rolls,
-                    };
-                }
-
-                res.Total = {
-                    pieces: (res.Total?.pieces || 0) + pieces,
-                    rolls: (res.Total?.rolls || 0) + rolls,
-                };
+    const getOrders = async () => {
+        if (!session) {
+            toast({
+                variant: "destructive",
+                title: "Session is required",
             });
-
-            if (tempDoubles) {
-                setDoubles(tempDoubles);
-            }
-
-            Object.entries(res).forEach(([key, value]) => {
-                res[key] = {
-                    pieces: value.pieces,
-                    rolls: Math.round(value.rolls * 100) / 100,
-                };
-            });
-
-            setSummary(res);
-            setInfo({
-                ...temp,
-                date: date,
-                totalPrice: Math.round(temp.totalPrice * 100) / 100,
+            return;
+        }
+        if (!date) {
+            toast({
+                variant: "destructive",
+                title: "Date is required",
             });
         }
-    }, [file]);
+        setLoading({ target: "orders" });
+        const targetDate = date?.toLocaleDateString("en-CA");
+        console.log(targetDate);
+
+        const response = await fetch("/api/kindo/get-orders", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Cache-Control": "no-cache",
+                Pragma: "no-cache",
+            },
+            body: JSON.stringify({ targetDate: targetDate, cookies: session }),
+        });
+
+        if (!response.ok) {
+            setLoading(null);
+            toast({
+                variant: "destructive",
+                title: "Failed to fetch orders",
+            });
+            return;
+        }
+        const data = await response.json();
+        setOrders(data);
+        setLoading(null);
+        toast({
+            title: "[orders: 200]",
+            description: "Fetched orders successfully",
+        });
+    };
+
+    const getDoubles = async () => {
+        if (!session) {
+            toast({
+                variant: "destructive",
+                title: "Session is required",
+            });
+            return;
+        }
+        if (!date) {
+            toast({
+                variant: "destructive",
+                title: "Date is required",
+            });
+        }
+        setLoading({ target: "doubles" });
+        const targetDate = date?.toLocaleDateString("en-CA");
+
+        console.log(targetDate);
+        const response = await fetch("/api/kindo/get-doubles", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Cache-Control": "no-cache",
+                Pragma: "no-cache",
+            },
+            body: JSON.stringify({ targetDate: targetDate, cookies: session }),
+        });
+
+        if (!response.ok) {
+            toast({
+                variant: "destructive",
+                title: "Failed to fetch doubles",
+            });
+            return;
+        }
+        const data = await response.json();
+        console.log(data);
+        setDoubles(data);
+        setLoading(null);
+        toast({
+            title: "[doubles: 200]",
+            description: "Fetched doubles successfully",
+        });
+    };
 
     return (
-        <section className="page">
-            <div className="flex flex-col justify-start gap-2">
-                <div id="" className="flex items-center justify-start gap-8">
-                    <h1 className="text-left text-3xl">School Summary</h1>
-                    {info.date && (
-                        <div className="w-fit space-y-1 rounded border bg-accent p-2 text-left">
-                            <p>{info.date}</p>
-                            <p>
-                                {info.totalPrice > 0
-                                    ? `$${info.totalPrice}`
-                                    : ""}
-                            </p>
-                        </div>
+        <div className="mx-auto flex flex-col items-center justify-center gap-8">
+            <div className="flex items-center justify-center gap-4 rounded-lg bg-slate-400 px-6 py-3 shadow-md">
+                <Button
+                    onClick={getSessions}
+                    disabled={session !== null || loading !== null}
+                >
+                    Login
+                </Button>
+                <Button
+                    variant="secondary"
+                    onClick={getOrders}
+                    disabled={session === null || loading !== null}
+                >
+                    Get Orders
+                </Button>
+                <Button
+                    variant="secondary"
+                    onClick={getDoubles}
+                    disabled={session === null || loading !== null}
+                >
+                    Get Doubles
+                </Button>
+                <Link
+                    href={`https://shop.tgcl.co.nz/shop/supplier.shtml?supplier=osushi&date=${date.toLocaleDateString("en-CA")}&task=label_pdf_sop_3x11`}
+                    target="_blank"
+                >
+                    <Button
+                        variant="outline"
+                        // onClick={getLabels}
+                        disabled={session === null || loading !== null}
+                    >
+                        Kindo Link
+                    </Button>
+                </Link>
+            </div>
+            <div className="flex items-center justify-center gap-4">
+                <DatePickerWithPresets date={date} setDate={setDate}>
+                    <Button className="" onClick={() => setDate(new Date())}>
+                        Today
+                    </Button>
+                </DatePickerWithPresets>
+                <div className="flex items-center gap-2">
+                    <div
+                        className={cn(
+                            "size-2 rounded-full",
+                            session ? "bg-green-500" : "bg-red-500"
+                        )}
+                    />
+                    <span>
+                        {(session && `${session.slice(29, 39)}`) ||
+                            "No session"}
+                        ...
+                    </span>
+                </div>
+            </div>
+            <div className="flex justify-center gap-8 rounded-lg bg-slate-400 p-4 shadow-lg">
+                <div className="flex h-[500px] w-[400px] items-center justify-center rounded-lg bg-white px-4 py-3">
+                    {loading?.target === "orders" ? (
+                        <span className="text-xl font-bold">
+                            Loading orders...
+                        </span>
+                    ) : (
+                        <SummaryTable results={orders} />
                     )}
                 </div>
-
-                <Label htmlFor="customFile">
-                    &nbsp;Upload a&nbsp;
-                    <span className="text-[hsl(var(--excel-green))]">CSV</span>
-                    &nbsp;or&nbsp;
-                    <span className="text-[hsl(var(--excel-green))]">
-                        Excel
-                    </span>
-                    &nbsp;file&nbsp;
-                </Label>
-                <div className="flex w-full flex-row items-center justify-between">
-                    <div className="flex flex-row gap-2">
-                        <Input
-                            type="file"
-                            id="customFile"
-                            accept=".csv, application/vnd.ms-excel, .xlsx, .xls"
-                            className="w-fit cursor-pointer"
-                            onChange={handleFileChange}
-                        />
-                        <Button className="w-20" onClick={clearContent}>
-                            Clear
-                        </Button>
-                    </div>
+                <div
+                    className={cn(
+                        "h-[500px] w-[850px] rounded-lg bg-white px-4 py-3",
+                        loading?.target === "doubles" &&
+                            "flex items-center justify-center"
+                    )}
+                >
+                    {loading?.target === "doubles" ? (
+                        <span className="text-xl font-bold">
+                            Loading Doubles...
+                        </span>
+                    ) : (
+                        <DoublesTable results={doubles} />
+                    )}
                 </div>
             </div>
-            <div className="flex flex-row justify-between gap-4">
-                <SummaryTable results={summary} />
-                <DoubleOrders results={doubles} />
-            </div>
-        </section>
+        </div>
     );
 };
 
