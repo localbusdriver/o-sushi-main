@@ -1,4 +1,6 @@
-import ProtectedNav from "@/components/protected-components/protected-nav";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+
+import { AppSidebar } from "@/components/protected-components/protected-sidebar";
 
 export const metadata = {
     title: "Admin",
@@ -7,8 +9,11 @@ export const metadata = {
 function Layout({ children }: { children: React.ReactNode }) {
     return (
         <>
-            <ProtectedNav />
-            <main className="md:mt-24 md:px-36">{children}</main>
+            <SidebarProvider>
+                <AppSidebar />
+                <SidebarTrigger />
+                <main className="mt-12 w-full px-36 lg:mt-24">{children}</main>
+            </SidebarProvider>
         </>
     );
 }

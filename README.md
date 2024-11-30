@@ -24,8 +24,8 @@ This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-opti
 
 To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+-   [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+-   [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 
@@ -35,73 +35,85 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
 
+# Kindo APIs
 
-# Kindo APIs  
-### Auth (get session)  
-https://shop.tgcl.co.nz/shop/tgweb.aspx  
-> Query Params (?):  
+### Auth (get session)
+
+https://shop.tgcl.co.nz/shop/tgweb.aspx
+
+> Query Params (?):
+>
 > > ?path=/sessions  
 > > path: /sessions  
-> Headers:  
+> > Headers:  
 > > Referer = https://shop.tgcl.co.nz/app/login  
 > > Content-Type = application/x-www-form-urlencoded;charset=UTF-8  
-> Body *(x-www-form-urlenconded)*:  
+> > Body _(x-www-form-urlenconded)_:  
 > > email = weemikyung@hotmail.com  
-> > password = j...a  
+> > password = j...a
 
-**Returned Cookies:**  
-- name: ezysessions.shop.tgcl.co.nz  
-- Value: *668d2a8cce6c8b007adc574cb760a0f5*  
-- Domain: shop.tgcl.co.nz  
-- path: /shop  
-- Expires: Session  
-- httpsOnly: false  
-- Secure: true  
-  
+**Returned Cookies:**
+
+-   name: ezysessions.shop.tgcl.co.nz
+-   Value: _668d2a8cce6c8b007adc574cb760a0f5_
+-   Domain: shop.tgcl.co.nz
+-   path: /shop
+-   Expires: Session
+-   httpsOnly: false
+-   Secure: true
+
 ### Product stock list (order status > view orders) [example]
-https://shop.tgcl.co.nz/shop/tgweb.aspx  
-> Query Params (?):  
+
+https://shop.tgcl.co.nz/shop/tgweb.aspx
+
+> Query Params (?):
+>
 > > ?path = %2Fsupplier%2Fosushi%2Forders&start_date=2024-11-13&end_date=2024-11-13&status_list=pending%2Cprocessing%2Ccompleted&non_orders=false  
 > > path: /supplier/osushi/orders  
 > > start_date: year-month-day  
 > > end_date: year-month-date  
 > > status_list: pending,processing,completed  
 > > non_orders: false  
->  Headers:  
+> >  Headers:  
 > > method: GET  
 > > Referer: https://shop.tgcl.co.nz/app/order-status  
-> > Cookie: ezsyssession.shop.tgcl.co.nz=bf992ce823905a2900f194bf636288bc; _ga=GA1.1.1186274636.1732047157; thegrowthcollectivelimited-_zldp=enAQevcBCesINGz8lqNBlOjx8MjRoiW%2FcCoQlPqKqAy0VVpix3EO%2FbwEDN5%2BhEPbIRgzEMc8DME%3D; thegrowthcollectivelimited-_zldt=2fef66af-044b-4863-9b92-d658f0441615-1; isiframeenabled=true; _ga_3Z8BTZRZE4=GS1.1.1732050158.2.1.1732050160.0.0.0  
+> > Cookie: ezsyssession.shop.tgcl.co.nz=bf992ce823905a2900f194bf636288bc; \_ga=GA1.1.1186274636.1732047157; thegrowthcollectivelimited-\_zldp=enAQevcBCesINGz8lqNBlOjx8MjRoiW%2FcCoQlPqKqAy0VVpix3EO%2FbwEDN5%2BhEPbIRgzEMc8DME%3D; thegrowthcollectivelimited-\_zldt=2fef66af-044b-4863-9b92-d658f0441615-1; isiframeenabled=true; \_ga_3Z8BTZRZE4=GS1.1.1732050158.2.1.1732050160.0.0.0  
 > > **Note**: **Entire Cookie is required**
 
 ### Product Stock List (usual way) [example]
-https://shop.tgcl.co.nz/shop/tgweb.aspx  
-> Query Params:  
+
+https://shop.tgcl.co.nz/shop/tgweb.aspx
+
+> Query Params:
+>
 > > ?path=/supplier/osushi/production_list&target_date=2024-11-20&production_list_name=&format=html&all_suppliers=true  
 > > path: /supplier/osushi/production_list  
 > > target_date: year-month-day  
 > > production_list_name: production_list  
 > > format: html  
 > > **all_suppliers: true**  
-> Headers:  
+> > Headers:  
 > > :authority: shop.tgcl.co.nz  
 > > :method: GET  
 > > :path: /shop/tgweb.aspx?path=/supplier/osushi/production_list&target_date=2024-11-20&production_list_name=production_list&format=html  
 > > Content-Type: text/html  
 > > Cookie: ^^  
-> > Referer: https://shop.tgcl.co.nz/shop/supplier.shtml?supplier=osushi&date=2024-11-20&task=production_list  
+> > Referer: https://shop.tgcl.co.nz/shop/supplier.shtml?supplier=osushi&date=2024-11-20&task=production_list
 
 ### Label pdf [example]
-https://shop.tgcl.co.nz/shop/tgweb.aspx  
-> Query Params:  
+
+https://shop.tgcl.co.nz/shop/tgweb.aspx
+
+> Query Params:
+>
 > > ?path=/supplier/osushi/label_pdf&target_date=2024-11-20&detail=label_pdf_sop_3x11  
 > > path: /supplier/osushi/label_pdf  
 > > target_date: 2024-11-20  
 > > detail: label_pdf_sop_3x11  
-> Headers:  
+> > Headers:  
 > > :authority: shop.tgcl.co.nz  
 > > :method: GET  
 > > :path: /shop/tgweb.aspx?path=/supplier/osushi/label_pdf&target_date=2024-11-20&detail=label_pdf_sop_3x11  
 > > Cookie: ^^  
 > > Content-Type: text/html  
-> > Referer: https://shop.tgcl.co.nz/shop/supplier.shtml?supplier=osushi&date=2024-11-20&task=label_pdf_sop_3x11  
-
+> > Referer: https://shop.tgcl.co.nz/shop/supplier.shtml?supplier=osushi&date=2024-11-20&task=label_pdf_sop_3x11 \*\*\*\*
