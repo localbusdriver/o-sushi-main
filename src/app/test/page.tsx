@@ -1,8 +1,8 @@
 "use client";
 
-import { Span } from "next/dist/trace";
+import Link from "next/link";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { DatePickerWithPresets } from "@/components/ui/date-picker-children";
@@ -27,10 +27,6 @@ const Page = () => {
     const [loading, setLoading] = useState<{ target: string } | null>(null);
     const [orders, setOrders] = useState<SummaryType | null>(null);
     const [doubles, setDoubles] = useState<DoublesType | null>(null);
-
-    useEffect(() => {
-        console.log(date);
-    }, [date]);
 
     const getSessions = async () => {
         setLoading({ target: "sessions" });
@@ -171,6 +167,18 @@ const Page = () => {
                 >
                     Get Doubles
                 </Button>
+                <Link
+                    href={`https://shop.tgcl.co.nz/shop/supplier.shtml?supplier=osushi&date=${date.toLocaleDateString("en-CA")}&task=label_pdf_sop_3x11`}
+                    target="_blank"
+                >
+                    <Button
+                        variant="outline"
+                        // onClick={getLabels}
+                        disabled={session === null || loading !== null}
+                    >
+                        Kindo Link
+                    </Button>
+                </Link>
             </div>
             <div className="flex items-center justify-center gap-4">
                 <DatePickerWithPresets date={date} setDate={setDate}>
