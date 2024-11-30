@@ -182,9 +182,7 @@ const Page = () => {
             </div>
             <div className="flex items-center justify-center gap-4">
                 <DatePickerWithPresets date={date} setDate={setDate}>
-                    <Button className="" onClick={() => setDate(new Date())}>
-                        Today
-                    </Button>
+                    <Button onClick={() => setDate(new Date())}>Today</Button>
                 </DatePickerWithPresets>
                 <div className="flex items-center gap-2">
                     <div
