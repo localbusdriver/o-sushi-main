@@ -97,7 +97,7 @@ export const DoublesTable = ({ results }: { results: DoublesType | null }) => {
                     </TableCell>
                 </TableRow>
                 <TableRow>
-                    <TableHead className="w-[100px]" colSpan={2}>
+                    <TableHead className="w-[100px] text-green-700" colSpan={2}>
                         Name
                     </TableHead>
                     <TableHead className="text-blue-500">Item</TableHead>
@@ -112,7 +112,7 @@ export const DoublesTable = ({ results }: { results: DoublesType | null }) => {
                 {Object.entries(results).map(([key, value]) => (
                     <TableRow key={key}>
                         <TableCell
-                            className="font-medium text-green-500"
+                            className="font-medium text-green-700"
                             colSpan={2}
                         >
                             {value.student}

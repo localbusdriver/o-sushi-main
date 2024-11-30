@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { Home, Newspaper, School } from "lucide-react";
 
 import {
@@ -11,24 +13,7 @@ import {
     SidebarMenuItem,
 } from "@/components/ui/sidebar";
 
-// Menu items.
-const items = [
-    {
-        title: "Home",
-        url: "/protected",
-        icon: Home,
-    },
-    {
-        title: "School Summary",
-        url: "/protected/school-sumary",
-        icon: School,
-    },
-    {
-        title: "Invoice Generator",
-        url: "/protected/invoice-generator",
-        icon: Newspaper,
-    },
-];
+import { navLinks } from "@/lib/data/protected-sidebar-data";
 
 export function AppSidebar() {
     return (
@@ -38,13 +23,13 @@ export function AppSidebar() {
                     <SidebarGroupLabel>O&apos;sushi</SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
-                            {items.map((item) => (
+                            {navLinks.map((item) => (
                                 <SidebarMenuItem key={item.title}>
                                     <SidebarMenuButton asChild>
-                                        <a href={item.url}>
-                                            <item.icon />
+                                        <Link href={item.href} passHref>
+                                            {item.icon}
                                             <span>{item.title}</span>
-                                        </a>
+                                        </Link>
                                     </SidebarMenuButton>
                                 </SidebarMenuItem>
                             ))}

@@ -1,22 +1,61 @@
 import Link from "next/link";
 
-// import { Button } from "@/components/ui/button";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
+
+import { navLinks } from "@/lib/data/protected-sidebar-data";
 
 const Page = () => {
     return (
-        <div className="grid grid-cols-1 grid-rows-2 gap-4">
-            <Link
-                href="/protected/school-summary"
-                className="rounded border p-4 text-xl"
-            >
-                School Summary
-            </Link>
-            <Link
-                href="/protected/invoice-generator"
-                className="rounded border p-4 text-xl"
-            >
-                Invoice Generator
-            </Link>
+        <div className="min-h-screen w-full bg-background px-4 py-6 sm:px-6 lg:px-8">
+            <div className="mx-auto">
+                {/* Header Section */}
+                <header className="mb-6 flex flex-col items-start gap-2 sm:mb-8">
+                    <h1 className="text-2xl text-red-300">O&apos;sushi</h1>
+                    <h1 className="text-2xl font-bold tracking-tight sm:text-3xl md:text-4xl">
+                        Dashboard
+                    </h1>
+                </header>
+
+                <div className="grid gap-4 sm:gap-6 lg:grid-cols-2 lg:gap-8">
+                    {navLinks.map((card) => (
+                        <Link
+                            key={card.href}
+                            href={card.href}
+                            className="block min-h-[150px]"
+                            passHref
+                        >
+                            <Card className="h-full transition-all duration-200 hover:scale-[1.02] hover:shadow-lg">
+                                <CardHeader className="p-4 sm:p-6">
+                                    <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
+                                        <div className="rounded-lg bg-primary/10 p-3 text-primary sm:p-2">
+                                            {card.icon}
+                                        </div>
+                                        <div className="space-y-1">
+                                            <CardTitle className="text-xl sm:text-lg md:text-xl">
+                                                {card.title}
+                                            </CardTitle>
+                                            <CardDescription className="text-sm sm:text-base">
+                                                {card.description}
+                                            </CardDescription>
+                                        </div>
+                                    </div>
+                                </CardHeader>
+                                <CardContent className="p-4 sm:p-6">
+                                    <div className="flex items-center text-sm text-muted-foreground">
+                                        Click to access
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </Link>
+                    ))}
+                </div>
+            </div>
         </div>
     );
 };

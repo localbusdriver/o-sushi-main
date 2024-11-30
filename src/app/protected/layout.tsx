@@ -12,7 +12,9 @@ function Layout({ children }: { children: React.ReactNode }) {
             <SidebarProvider>
                 <AppSidebar />
                 <SidebarTrigger />
-                <main className="mt-12 w-full px-36 lg:mt-24">{children}</main>
+                <main className="mt-12 w-full lg:mt-24 xl:px-36">
+                    {children}
+                </main>
             </SidebarProvider>
         </>
     );
