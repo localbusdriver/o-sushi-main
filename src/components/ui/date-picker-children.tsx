@@ -31,6 +31,12 @@ export function DatePickerWithPresets({
     setDate: React.Dispatch<React.SetStateAction<Date>>;
     children?: React.ReactNode;
 }) {
+    const handleSelect = (day: Date | undefined) => {
+        if (day) {
+            setDate(day);
+        }
+    };
+
     return (
         <Popover>
             <PopoverTrigger asChild>
@@ -51,7 +57,7 @@ export function DatePickerWithPresets({
                     <Calendar
                         mode="single"
                         selected={date}
-                        onSelect={setDate}
+                        onSelect={handleSelect}
                     />
                 </div>
             </PopoverContent>

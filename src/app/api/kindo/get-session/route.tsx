@@ -8,7 +8,6 @@ export async function GET(req: NextRequest) {
         method: "POST",
         contentType: "application/x-www-form-urlencoded;charset=UTF-8",
         referer: "https://shop.tgcl.co.nz/app/login",
-        Credentials: "include; SameSite=None; Secure",
         body: {
             email: process.env.KINDO_API_EMAIL,
             password: process.env.KINDO_API_PASSWORD,
