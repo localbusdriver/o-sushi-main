@@ -37,6 +37,12 @@ export async function GET(req: NextRequest) {
             "Access-Control-Allow-Origin": "*",
             "Access-Control-Allow-Credentials": "true",
             "Access-Control-Expose-Headers": "Set-Cookie",
+            // Add strict cache control headers
+            "Cache-Control":
+                "no-store, no-cache, must-revalidate, proxy-revalidate",
+            Pragma: "no-cache",
+            Expires: "0",
+            "Surrogate-Control": "no-store",
         },
     });
 
