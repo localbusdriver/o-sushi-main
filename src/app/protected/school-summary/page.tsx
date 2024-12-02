@@ -140,7 +140,12 @@ const Page = () => {
                 method: "GET",
                 headers: {
                     "Cache-Control": "no-cache",
+                    "x-timestamp": new Date().getTime().toString(),
                     Pragma: "no-cache",
+                },
+                cache: "no-store",
+                next: {
+                    revalidate: 0,
                 },
             });
 
@@ -174,8 +179,13 @@ const Page = () => {
                     "Content-Type": "application/json",
                     "Cache-Control": "no-cache, no-store, must-revalidate",
                     Pragma: "no-cache",
+                    "x-timestamp": new Date().getTime().toString(),
                 },
                 body: JSON.stringify({ targetDate, cookies: session }),
+                cache: "no-store",
+                next: {
+                    revalidate: 0,
+                },
             });
 
             if (!response.ok) throw new Error("Failed to fetch orders");
@@ -208,8 +218,13 @@ const Page = () => {
                     "Content-Type": "application/json",
                     "Cache-Control": "no-cache, no-store, must-revalidate",
                     Pragma: "no-cache",
+                    "x-timestamp": new Date().getTime().toString(),
                 },
                 body: JSON.stringify({ targetDate, cookies: session }),
+                cache: "no-store",
+                next: {
+                    revalidate: 0,
+                },
             });
 
             if (!response.ok) throw new Error("Failed to fetch doubles");

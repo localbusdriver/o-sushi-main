@@ -35,6 +35,7 @@ export const fetchKindoAPI = async ({
         Pragma: "no-cache",
         "User-Agent":
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "x-timestamp": new Date().getTime().toString(),
     };
     referer && (headers["Referer"] = referer);
     cookie && (headers["Cookie"] = cookie + process.env.KINDO_COOKIE_ENDING);
@@ -44,6 +45,10 @@ export const fetchKindoAPI = async ({
         method: method,
         headers: headers,
         credentials: "include",
+        cache: "no-store",
+        next: {
+            revalidate: 0,
+        },
     };
     if (body && method === "POST") {
         if (contentType?.includes("x-www-form-urlencoded")) {
