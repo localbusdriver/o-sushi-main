@@ -1,32 +1,42 @@
+// src\app\api\kindo\get-session\route.tsx
 import { NextRequest, NextResponse } from "next/server";
 
 import { fetchKindoAPI } from "@/lib/utils";
 
 export async function GET(req: NextRequest) {
+    if (!process.env.KINDO_API_EMAIL || !process.env.KINDO_API_PASSWORD) {
+        return NextResponse.json(
+            { error: "KINDO_API_EMAIL or KINDO_API_PASSWORD is not defined" },
+            { status: 400 }
+        );
+    }
+
     const response = await fetchKindoAPI({
-        path: "?path=/sessions",
+        path: "/sessions",
         method: "POST",
-        contentType: "application/x-www-form-urlencoded;charset=UTF-8",
-        referer: "https://shop.tgcl.co.nz/app/login",
+        contentType: "application/x-www-form-urlencoded",
         body: {
-            email: process.env.KINDO_API_EMAIL,
-            password: process.env.KINDO_API_PASSWORD,
-        },
+            email: process.env.KINDO_API_EMAIL!,
+            password: process.env.KINDO_API_PASSWORD!,
+        } as Record<string, string>,
     });
 
     if (!response.ok) {
+        const responseText = await response.text();
+        console.log("response text", responseText);
         console.log(response.statusText);
         return NextResponse.json(
             { error: response.statusText },
             { status: response.status }
         );
     }
-    const cookies = response.headers.get("set-cookie");
+
+    const cookies = response.headers.get("Set-Cookie");
 
     if (!cookies) {
         console.log("Response body:", await response.text());
         return NextResponse.json(
-            { error: "Failed to get cookies" },
+            { error: "Failed to get session" },
             { status: response.status }
         );
     }

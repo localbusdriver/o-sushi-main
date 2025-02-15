@@ -1,16 +1,36 @@
+// src\app\api\kindo\get-orders\route.tsx
 import { NextRequest, NextResponse } from "next/server";
 
 import { parse } from "node-html-parser";
 
 import { fetchKindoAPI } from "@/lib/utils";
 
+type Category =
+    | "Avocado"
+    | "Chicken teriyaki"
+    | "Salmon & Avocado"
+    | "Tuna Mayo"
+    | "Vegetarian";
+
 interface SushiOrder {
-    [key: string]: number;
+    Avocado: number;
+    "Chicken teriyaki": number;
+    "Salmon & Avocado": number;
+    "Tuna Mayo": number;
+    Vegetarian: number;
+    Total: number;
 }
 
 function parseSushiTable(htmlString: string): SushiOrder {
     const root = parse(htmlString);
-    const orders: SushiOrder = {};
+    const orders: SushiOrder = {
+        Avocado: 0,
+        "Chicken teriyaki": 0,
+        "Salmon & Avocado": 0,
+        "Tuna Mayo": 0,
+        Vegetarian: 0,
+        Total: 0,
+    };
 
     const rows = root.querySelectorAll(".plist_table tr");
     rows.forEach((row) => {
@@ -19,7 +39,7 @@ function parseSushiTable(htmlString: string): SushiOrder {
         if (!quantityCell || !productCell) return;
 
         const product = productCell.text.trim().split(" - ");
-        const productName = product[0];
+        const productName = product[0] as Category | "Mixed";
         const productAmount = product[1].match(/\d+/)?.[0];
         const quantity =
             parseInt(quantityCell.text.trim() || "0", 10) *
@@ -36,25 +56,25 @@ function parseSushiTable(htmlString: string): SushiOrder {
         orders["Total"] = (orders["Total"] || 0) + quantity;
     });
 
+    console.log(orders);
     return orders;
 }
 
 export async function POST(req: NextRequest) {
     const { targetDate, cookies } = await req.json();
-    console.log(targetDate);
 
-    const path = `?path=/supplier/osushi/production_list&target_date=${targetDate}&production_list_name=&format=html&all_suppliers=true`;
-    const referer = `https://shop.tgcl.co.nz/shop/supplier.shtml?supplier=osushi&date=${targetDate}&task=production_list`;
+    const path = `?path=/supplier/osushi/production_list&target_date=${targetDate}&production_list_name=production_list&format=html`;
 
     const response = await fetchKindoAPI({
         path: path,
         method: "GET",
-        contentType: "application/json",
-        referer: referer,
+        contentType: "text/html",
         cookie: cookies,
+        // cookie: "66f105b80abae780dac6feb59832b1ae",  // for testing
     });
 
     if (!response.ok) {
+        console.log(response.statusText);
         return NextResponse.json(
             { error: response.statusText },
             { status: response.status }

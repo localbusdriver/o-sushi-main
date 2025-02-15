@@ -1,10 +1,8 @@
 "use client";
 
-import { STRING_LITERAL_DROP_BUNDLE } from "next/dist/shared/lib/constants";
+//src\app\protected\school-summary\page.tsx
+import { useEffect, useState } from "react";
 
-import { useState } from "react";
-
-import { StringToBoolean } from "class-variance-authority/types";
 import { Calendar, Copy, ExternalLink, FileText, LogIn } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -127,11 +125,18 @@ const ExternalLinkButton = ({
 
 const Page = () => {
     const { toast } = useToast();
-    const [session, setSession] = useState<string | null>(null);
+    const [session, setSession] = useState<string | null>(
+        () => localStorage.getItem("session") ?? null
+    );
     const [date, setDate] = useState<Date>(new Date());
     const [loading, setLoading] = useState<LoadingState | null>(null);
     const [orders, setOrders] = useState<SummaryType | null>(null);
     const [doubles, setDoubles] = useState<DoublesType | null>(null);
+
+    useEffect(() => {
+        session && localStorage.removeItem("session");
+        session && localStorage.setItem("session", session);
+    }, [session]);
 
     const getSessions = async () => {
         setLoading({ target: "sessions" });
@@ -143,7 +148,6 @@ const Page = () => {
                     "x-timestamp": new Date().getTime().toString(),
                     Pragma: "no-cache",
                 },
-                cache: "no-store",
                 next: {
                     revalidate: 0,
                 },
@@ -152,6 +156,10 @@ const Page = () => {
             if (!response.ok) throw new Error("Failed to fetch sessions");
 
             const data = await response.json();
+
+            localStorage.removeItem("session");
+            localStorage.setItem("session", data);
+
             setSession(data);
             toast({
                 title: "[sessions: 200]",
@@ -168,7 +176,7 @@ const Page = () => {
     };
 
     const getOrders = async () => {
-        if (!validateSessionAndDate()) return;
+        // if (!validateSessionAndDate()) return;
 
         setLoading({ target: "orders" });
         try {
@@ -182,7 +190,6 @@ const Page = () => {
                     "x-timestamp": new Date().getTime().toString(),
                 },
                 body: JSON.stringify({ targetDate, cookies: session }),
-                cache: "no-store",
                 next: {
                     revalidate: 0,
                 },
@@ -247,6 +254,7 @@ const Page = () => {
 
     const validateSessionAndDate = () => {
         if (!session) {
+            console.log("session is null");
             toast({
                 variant: "destructive",
                 title: "Session is required",
@@ -309,7 +317,8 @@ const Page = () => {
 
                     <ActionButton
                         onClick={getDoubles}
-                        disabled={session === null || loading !== null}
+                        disabled={false}
+                        // disabled={session === null || loading !== null}
                         icon={<Copy className="mr-2 h-4 w-4" />}
                         label="Doubles"
                         tooltip="Check for duplicate orders"
