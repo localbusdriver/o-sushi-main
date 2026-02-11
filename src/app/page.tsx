@@ -2,7 +2,7 @@
 
 import { FC } from "react";
 
-const Home: FC = () => {
+const Home: FC = async () => {
     return (
         <main className="h-screen text-center">
             <h1>Redirecting...</h1>

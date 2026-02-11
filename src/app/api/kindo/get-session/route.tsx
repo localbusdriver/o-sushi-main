@@ -22,9 +22,6 @@ export async function GET(req: NextRequest) {
     });
 
     if (!response.ok) {
-        const responseText = await response.text();
-        console.log("response text", responseText);
-        console.log(response.statusText);
         return NextResponse.json(
             { error: response.statusText },
             { status: response.status }
@@ -41,6 +38,17 @@ export async function GET(req: NextRequest) {
         );
     }
 
+    // Forward the cookies in the response
+    console.log(cookies.split(";"));
+    cookies
+        .split(";")
+        .map((cookie) =>
+            cookie.includes("ezsyssession.shop.kindo.co.nz")
+                ? cookie.trim().split("=")[1]
+                : null
+        );
+    console.log(cookies);
+
     const jsonResponse = NextResponse.json(cookies, {
         status: response.status,
         headers: {
@@ -56,7 +64,6 @@ export async function GET(req: NextRequest) {
         },
     });
 
-    // Forward the cookies in the response
     if (cookies) {
         jsonResponse.headers.append("Set-Cookie", cookies);
     }

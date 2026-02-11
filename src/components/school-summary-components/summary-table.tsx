@@ -17,66 +17,83 @@ import type {
 export const SummaryTable = ({ results }: { results: SummaryType | null }) => {
     if (results === null) return null;
     return (
-        <Table className="rounded-lg">
-            <TableCaption>Report Summary</TableCaption>
-            <TableHeader>
-                <TableRow>
-                    <TableCell
-                        colSpan={4}
-                        className="text-center font-bold text-primary"
-                    >
-                        Order Summary
-                    </TableCell>
-                </TableRow>
-                <TableRow>
-                    <TableHead className="w-[100px]" colSpan={2}>
-                        Item
-                    </TableHead>
-                    <TableHead className="text-right">Rolls</TableHead>
-                    <TableHead className="text-right">Pieces</TableHead>
-                </TableRow>
-            </TableHeader>
-            <TableBody>
-                {results ? (
-                    Object.entries(results).map(([item, obj]) =>
-                        item !== "Total" ? (
-                            <TableRow key={item}>
-                                <TableCell className="font-medium" colSpan={2}>
-                                    {item}
-                                </TableCell>
-                                <TableCell className="text-right">
-                                    {obj / 10}
-                                </TableCell>
-                                <TableCell className="text-right">
-                                    {obj}
-                                </TableCell>
-                            </TableRow>
-                        ) : null
-                    )
-                ) : (
-                    <TableRow>
+        <div className="w-full">
+            <Table>
+                <TableCaption className="mt-6">Report Summary</TableCaption>
+                <TableHeader className="bg-muted/50 sticky top-0 backdrop-blur">
+                    <TableRow className="hover:bg-transparent">
                         <TableCell
-                            colSpan={5}
-                            className="text-center text-destructive"
+                            colSpan={4}
+                            className="bg-primary/5 border-primary/20 text-primary border-b-2 py-4 text-center font-bold"
                         >
-                            No Summary
+                            Order Summary
                         </TableCell>
                     </TableRow>
-                )}
-            </TableBody>
+                    <TableRow className="hover:bg-transparent">
+                        <TableHead
+                            className="bg-muted sticky top-[57px] px-4 py-3 font-semibold"
+                            colSpan={2}
+                        >
+                            Item
+                        </TableHead>
+                        <TableHead className="bg-muted sticky top-[57px] px-4 py-3 text-right font-semibold">
+                            Rolls
+                        </TableHead>
+                        <TableHead className="bg-muted sticky top-[57px] px-4 py-3 text-right font-semibold">
+                            Pieces
+                        </TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {results ? (
+                        Object.entries(results).map(([item, obj]) =>
+                            item !== "Total" ? (
+                                <TableRow
+                                    key={item}
+                                    className="hover:bg-muted/50 transition-colors"
+                                >
+                                    <TableCell
+                                        className="px-4 py-3 font-medium"
+                                        colSpan={2}
+                                    >
+                                        {item}
+                                    </TableCell>
+                                    <TableCell className="px-4 py-3 text-right">
+                                        {obj / 10}
+                                    </TableCell>
+                                    <TableCell className="px-4 py-3 text-right">
+                                        {obj}
+                                    </TableCell>
+                                </TableRow>
+                            ) : null
+                        )
+                    ) : (
+                        <TableRow>
+                            <TableCell
+                                colSpan={4}
+                                className="text-destructive px-4 py-8 text-center"
+                            >
+                                No Summary
+                            </TableCell>
+                        </TableRow>
+                    )}
+                </TableBody>
 
-            <TableFooter>
-                <TableRow>
-                    <TableCell colSpan={2}>Total</TableCell>
-                    <TableCell className="text-right">
-                        {results.Total / 10}
-                    </TableCell>
-                    <TableCell className="text-right">
-                        {results.Total}
-                    </TableCell>
-                </TableRow>
-            </TableFooter>
-        </Table>
+                <TableFooter className="bg-muted/80 font-semibold">
+                    <TableRow className="hover:bg-muted/80">
+                        <TableCell className="px-4 py-3" colSpan={2}>
+                            Total
+                        </TableCell>
+                        <TableCell className="px-4 py-3 text-right">
+                            {results.Total / 10}
+                        </TableCell>
+                        <TableCell className="px-4 py-3 text-right">
+                            {results.Total}
+                        </TableCell>
+                    </TableRow>
+                </TableFooter>
+            </Table>
+        </div>
     );
 };
 
@@ -84,55 +101,91 @@ export const DoublesTable = ({ results }: { results: DoublesType | null }) => {
     if (results === null) {
         return null;
     }
+
+    const isEmpty = Object.keys(results).length === 0;
+
     return (
-        <Table className="rounded-lg">
-            <TableCaption>Double Orders</TableCaption>
-            <TableHeader>
-                <TableRow>
-                    <TableCell
-                        colSpan={6}
-                        className="text-center font-bold text-primary"
-                    >
-                        Double Orders
-                    </TableCell>
-                </TableRow>
-                <TableRow>
-                    <TableHead className="w-[100px] text-green-700" colSpan={2}>
-                        Name
-                    </TableHead>
-                    <TableHead className="text-blue-500">Item</TableHead>
-                    <TableHead className="text-orange-500">Quantity</TableHead>
-                    <TableHead className="text-indigo-500">
-                        Organization
-                    </TableHead>
-                    <TableHead className="text-amber-500">Room no.</TableHead>
-                </TableRow>
-            </TableHeader>
-            <TableBody>
-                {Object.entries(results).map(([key, value]) => (
-                    <TableRow key={key}>
+        <div className="w-full">
+            <Table>
+                <TableCaption className="mt-6">
+                    Double Orders Report
+                </TableCaption>
+                <TableHeader className="bg-muted/50 sticky top-0 backdrop-blur">
+                    <TableRow className="hover:bg-transparent">
                         <TableCell
-                            className="font-medium text-green-700"
-                            colSpan={2}
+                            colSpan={6}
+                            className="bg-primary/5 border-primary/20 text-primary border-b-2 py-4 text-center font-bold"
                         >
-                            {value.student}
-                        </TableCell>
-                        <TableCell className="flex flex-col gap-2 text-blue-500">
-                            <span>{value.item.split(" - ")[0]}</span>
-                            <span>{value.item.split(" - ")[1]}</span>
-                        </TableCell>
-                        <TableCell className="text-orange-500">
-                            {value.quantity}
-                        </TableCell>
-                        <TableCell className="text-indigo-500">
-                            {value.school}
-                        </TableCell>
-                        <TableCell className="text-amber-500">
-                            {value.roomNumber}
+                            Double Orders
                         </TableCell>
                     </TableRow>
-                ))}
-            </TableBody>
-        </Table>
+                    <TableRow className="hover:bg-transparent">
+                        <TableHead
+                            className="bg-muted sticky top-[57px] px-4 py-3 font-semibold text-green-700"
+                            colSpan={2}
+                        >
+                            Name
+                        </TableHead>
+                        <TableHead className="bg-muted sticky top-[57px] px-4 py-3 font-semibold text-blue-500">
+                            Item
+                        </TableHead>
+                        <TableHead className="bg-muted sticky top-[57px] px-4 py-3 font-semibold text-orange-500">
+                            Quantity
+                        </TableHead>
+                        <TableHead className="bg-muted sticky top-[57px] px-4 py-3 font-semibold text-indigo-500">
+                            Organization
+                        </TableHead>
+                        <TableHead className="bg-muted sticky top-[57px] px-4 py-3 font-semibold text-amber-500">
+                            Room no.
+                        </TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {isEmpty ? (
+                        <TableRow>
+                            <TableCell
+                                colSpan={6}
+                                className="text-muted-foreground px-4 py-8 text-center"
+                            >
+                                No double orders found
+                            </TableCell>
+                        </TableRow>
+                    ) : (
+                        Object.entries(results).map(([key, value]) => (
+                            <TableRow
+                                key={key}
+                                className="hover:bg-muted/50 transition-colors"
+                            >
+                                <TableCell
+                                    className="px-4 py-3 font-medium text-green-700"
+                                    colSpan={2}
+                                >
+                                    {value.student}
+                                </TableCell>
+                                <TableCell className="px-4 py-3">
+                                    <div className="flex flex-col gap-1 text-blue-500">
+                                        <span className="font-medium">
+                                            {value.item.split(" - ")[0]}
+                                        </span>
+                                        <span className="text-xs">
+                                            {value.item.split(" - ")[1]}
+                                        </span>
+                                    </div>
+                                </TableCell>
+                                <TableCell className="px-4 py-3 font-medium text-orange-500">
+                                    {value.quantity}
+                                </TableCell>
+                                <TableCell className="px-4 py-3 text-indigo-500">
+                                    {value.school}
+                                </TableCell>
+                                <TableCell className="px-4 py-3 text-amber-500">
+                                    {value.roomNumber}
+                                </TableCell>
+                            </TableRow>
+                        ))
+                    )}
+                </TableBody>
+            </Table>
+        </div>
     );
 };

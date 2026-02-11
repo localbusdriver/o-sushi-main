@@ -1,4 +1,5 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { Toaster } from "@/components/ui/sonner";
 
 import { AppSidebar } from "@/components/protected-components/protected-sidebar";
 
@@ -15,6 +16,7 @@ function Layout({ children }: { children: React.ReactNode }) {
                 <main className="mt-12 w-full lg:mt-24 xl:px-36">
                     {children}
                 </main>
+                <Toaster />
             </SidebarProvider>
         </>
     );

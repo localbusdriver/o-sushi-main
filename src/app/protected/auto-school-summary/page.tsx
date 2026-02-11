@@ -3,10 +3,18 @@
 //src\app\protected\school-summary\page.tsx
 import { useEffect, useState } from "react";
 
-import { Calendar, Copy, ExternalLink, FileText, LogIn } from "lucide-react";
+import {
+    Calendar,
+    Copy,
+    ExternalLink,
+    FileText,
+    LogIn,
+    LogOut,
+} from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import { DatePickerWithPresets } from "@/components/ui/date-picker-children";
+// import { DatePickerWithPresets } from "@/components/ui/date-picker-children";
 import {
     Tooltip,
     TooltipContent,
@@ -24,8 +32,6 @@ import type {
     SummaryType,
 } from "@/lib/types/school-summary-types";
 import { cn } from "@/lib/utils";
-
-import { useToast } from "@/hooks/use-toast";
 
 interface LoadingState {
     target: "sessions" | "orders" | "doubles" | null;
@@ -56,7 +62,7 @@ const ActionButton = ({
                     size="lg"
                     onClick={onClick}
                     disabled={disabled}
-                    className={cn("w-full sm:w-[140px]", className)}
+                    className={cn("w-full sm:w-35", className)}
                 >
                     {icon}
                     {label}
@@ -70,7 +76,7 @@ const ActionButton = ({
 );
 
 const SessionStatus = ({ session }: { session: string | null }) => (
-    <div className="flex h-[44px] items-center gap-2 rounded-md bg-white px-4">
+    <div className="flex h-11 items-center gap-2 rounded-md bg-white px-4">
         <div
             className={cn(
                 "size-2 rounded-full",
@@ -78,7 +84,7 @@ const SessionStatus = ({ session }: { session: string | null }) => (
             )}
         />
         <span className="text-sm text-gray-600">
-            {(session && `${session.slice(29, 39)}`) || "No session"}...
+            {(session && `${session.slice(0, 10)}...`) || "No session"}
         </span>
     </div>
 );
@@ -109,7 +115,7 @@ const ExternalLinkButton = ({
                         variant="outline"
                         size="lg"
                         disabled={disabled}
-                        className="w-full sm:w-[140px]"
+                        className="w-full sm:w-35"
                     >
                         {icon}
                         {label}
@@ -124,18 +130,22 @@ const ExternalLinkButton = ({
 );
 
 const Page = () => {
-    const { toast } = useToast();
-    const [session, setSession] = useState<string | null>(
-        () => localStorage.getItem("session") ?? null
-    );
+    const [session, setSession] = useState<string | null>(() => {
+        if (typeof localStorage === undefined) {
+            return null;
+        }
+        return localStorage.getItem("session") ?? null;
+    });
     const [date, setDate] = useState<Date>(new Date());
     const [loading, setLoading] = useState<LoadingState | null>(null);
     const [orders, setOrders] = useState<SummaryType | null>(null);
     const [doubles, setDoubles] = useState<DoublesType | null>(null);
 
     useEffect(() => {
-        session && localStorage.removeItem("session");
-        session && localStorage.setItem("session", session);
+        if (session) {
+            localStorage.removeItem("session");
+            localStorage.setItem("session", session);
+        }
     }, [session]);
 
     const getSessions = async () => {
@@ -161,15 +171,10 @@ const Page = () => {
             localStorage.setItem("session", data);
 
             setSession(data);
-            toast({
-                title: "[sessions: 200]",
-                description: "Fetched sessions successfully",
-            });
+            toast.success("Fetched sessions successfully");
         } catch (error) {
-            toast({
-                variant: "destructive",
-                title: "Failed to fetch sessions",
-            });
+            console.log(error);
+            toast.error("Failed to fetch sessions");
         } finally {
             setLoading(null);
         }
@@ -199,15 +204,10 @@ const Page = () => {
 
             const data = await response.json();
             setOrders(data);
-            toast({
-                title: "[orders: 200]",
-                description: "Fetched orders successfully",
-            });
+            toast.success("Fetched orders successfully");
         } catch (error) {
-            toast({
-                variant: "destructive",
-                title: "Failed to fetch orders",
-            });
+            console.log(error);
+            toast.error("Failed to fetch orders");
         } finally {
             setLoading(null);
         }
@@ -238,15 +238,10 @@ const Page = () => {
 
             const data = await response.json();
             setDoubles(data);
-            toast({
-                title: "[doubles: 200]",
-                description: "Fetched doubles successfully",
-            });
+            toast.success("Fetched Double orders successfully");
         } catch (error) {
-            toast({
-                variant: "destructive",
-                title: "Failed to fetch doubles",
-            });
+            console.log(error);
+            toast.error("Failed to fetch doubles");
         } finally {
             setLoading(null);
         }
@@ -254,25 +249,25 @@ const Page = () => {
 
     const validateSessionAndDate = () => {
         if (!session) {
-            console.log("session is null");
-            toast({
-                variant: "destructive",
-                title: "Session is required",
-            });
+            toast.error("Session is required");
             return false;
         }
         if (!date) {
-            toast({
-                variant: "destructive",
-                title: "Date is required",
-            });
+            toast.error("Date is required");
             return false;
         }
         return true;
     };
 
     // Generate Kindo labels URL
-    const kindoLabelsUrl = `https://shop.tgcl.co.nz/shop/supplier.shtml?supplier=osushi&date=${date.toLocaleDateString("en-CA")}&task=label_pdf_sop_3x11`;
+    // https://shop.kindo.co.nz/shop/supplier.shtml?supplier=osushi&date=2025-02-13&task=label_pdf_sop_3x11
+    const kindoLabelsUrl = `https://shop.kindo.co.nz/shop/supplier.shtml?supplier=osushi&date=${date.toLocaleDateString("en-CA")}&task=label_pdf_sop_3x11`;
+
+    const handleClearSession = () => {
+        localStorage.removeItem("session");
+        setSession(null);
+        toast.info("Session cleared successfully");
+    };
 
     return (
         <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
@@ -287,11 +282,18 @@ const Page = () => {
                             label="Get session"
                             tooltip="Login to Kindo to access order data"
                         />
+                        <ActionButton
+                            onClick={handleClearSession}
+                            disabled={session === null}
+                            icon={<LogOut className="mr-2 h-4 w-4" />}
+                            label="Clear Session"
+                            tooltip="Clear session"
+                        />
                         <SessionStatus session={session} />
                     </div>
 
                     <div className="flex items-center gap-4">
-                        <DatePickerWithPresets date={date} setDate={setDate}>
+                        {/* <DatePickerWithPresets date={date} setDate={setDate}>
                             <Button
                                 variant="outline"
                                 size="lg"
@@ -301,7 +303,7 @@ const Page = () => {
                                 <Calendar className="mr-2 h-4 w-4" />
                                 Today
                             </Button>
-                        </DatePickerWithPresets>
+                        </DatePickerWithPresets> */}
                     </div>
                 </div>
 
@@ -336,7 +338,7 @@ const Page = () => {
             </div>
 
             <div className="mt-6 flex flex-col gap-6 lg:flex-row lg:justify-center">
-                <div className="h-[500px] w-full rounded-lg bg-white px-4 py-3 shadow-lg lg:w-[400px]">
+                <div className="h-125 w-full rounded-lg bg-white px-4 py-3 shadow-lg lg:w-100">
                     {loading?.target === "orders" ? (
                         <div className="flex h-full items-center justify-center">
                             <span className="text-xl font-bold">
@@ -347,10 +349,9 @@ const Page = () => {
                         <SummaryTable results={orders} />
                     )}
                 </div>
-
                 <div
                     className={cn(
-                        "h-[500px] w-full rounded-lg bg-white px-4 py-3 shadow-lg lg:w-[850px]",
+                        "h-125 w-full rounded-lg bg-white px-4 py-3 shadow-lg lg:w-212.5",
                         loading?.target === "doubles" &&
                             "flex items-center justify-center"
                     )}

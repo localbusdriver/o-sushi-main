@@ -1,9 +1,10 @@
+// src\app\api\kindo\get-doubles\route.tsx
 import { NextRequest, NextResponse } from "next/server";
 
 import { DoublesType } from "@/lib/types/school-summary-types";
 import { fetchKindoAPI } from "@/lib/utils";
 
-const formatOrders = (unformattedOrders: []): DoublesType[] => {
+const formatOrders = (unformattedOrders: any[]): DoublesType[] => {
     const res: DoublesType[] = [];
 
     unformattedOrders.forEach((order) => {
@@ -22,46 +23,41 @@ const formatOrders = (unformattedOrders: []): DoublesType[] => {
 
 export async function POST(req: NextRequest) {
     const { targetDate, cookies } = await req.json();
-    const path = `?path=%2Fsupplier%2Fosushi%2Forders&start_date=${targetDate}&end_date=${targetDate}&status_list=pending%2Cprocessing%2Ccompleted&non_orders=false`;
-    const path2 = `?path=%2Fsupplier%2Fosushi_2%2Forders&start_date=${targetDate}&end_date=${targetDate}&status_list=pending%2Cprocessing%2Ccompleted&non_orders=false`;
-    const referer = "https://shop.tgcl.co.nz/app/order-status";
-    console.log(targetDate);
+    const path = `/supplier/osushi/orders?start_date=${targetDate}&end_date=${targetDate}&status_list=pending%2Cprocessing%2Ccompleted&non_orders=false`;
 
     const response = await fetchKindoAPI({
         path: path,
         method: "GET",
         contentType: "application/json",
-        referer: referer,
         cookie: cookies,
     });
+
     if (!response.ok) {
+        const responseText = await response.text();
+        console.log(responseText);
         return NextResponse.json(
             { error: response.statusText },
             { status: response.status }
         );
     }
+
     const response2 = await fetchKindoAPI({
-        path: path2,
+        path: `/supplier/osushi_2/orders?start_date=${targetDate}&end_date=${targetDate}&status_list=pending%2Cprocessing%2Ccompleted&non_orders=false`,
         method: "GET",
         contentType: "application/json",
-        referer: referer,
         cookie: cookies,
     });
-    if (!response2.ok) {
-        return NextResponse.json(
-            { error: response2.statusText },
-            { status: response2.status }
-        );
-    }
 
-    const responseText = await response.json();
-    const response2Text = await response2.json();
+    const responseJSON = await response.json();
+    const response2JSON = await response2.json();
 
-    const orders = responseText.orders;
-    const orders2 = response2Text.orders;
+    const orders = responseJSON.orders;
+    const orders2 = response2JSON.orders;
 
-    const concattenatedResponse = orders.concat(orders2);
-    const formattedOrders = formatOrders(concattenatedResponse);
+    if (!orders && !orders2)
+        return NextResponse.json([], { status: response.status });
+    const conncattenatedOrders = [...orders, ...orders2];
+    const formattedOrders = formatOrders(conncattenatedOrders);
 
     return NextResponse.json(formattedOrders, { status: response.status });
 }

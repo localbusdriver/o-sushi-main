@@ -44,14 +44,14 @@ export const fetchKindoAPI = async ({
     }
 
     const cookies: Record<string, string> = {
-        "ezsyssession.shop.kindo.co.nz": "66f105b80abae780dac6feb59832b1ae",
-        // "ezsyssession.shop.kindo.co.nz": cookie || "",
-        _ga: "GA1.1.1730142000.1739169044",
+        // "ezsyssession.shop.kindo.co.nz": "71c6fd79abcf97a6f0d44d3ab2d16356",
+        "ezsyssession.shop.kindo.co.nz": cookie || "",
+        _ga: "GA1.1.1305028429.1739656881",
         "thegrowthcollectivelimited-_zldp":
-            "enAQevcBCesHhPR8nz2O4IOYx3Kxli%2FrursEQxfEkj6jcxSyQPI2mL%2BV8cZ5cjGwb3qDSNrSNME%3D",
+            "enAQevcBCevhWa3lDJrZN49tC7CbH%2FHP9ZV7wIkBZdlGjs1QaQNt9QFB0u43GHbvb3qDSNrSNME%3D",
         "thegrowthcollectivelimited-_zldt":
-            "8a29f51b-5df5-4d9a-870d-7ff77cb906ef-0",
-        _ga_3Z8BTZRZE4: "GS1.1.1739169043.1.1.1739169490.0.0.0",
+            "6c5422b2-c2e9-4d88-8666-144b644d013f-2",
+        _ga_3Z8BTZRZE4: "GS1.1.1739656881.1.1.1739657228.0.0.0",
     };
 
     const cookieHeader = cookie && getCookieHeader(cookies);
@@ -87,8 +87,8 @@ export const fetchKindoAPI = async ({
         fetchOptions.body = reqBody;
     }
 
-    console.log("\n", endpoint.toString());
-    console.log("\n", headers);
-    console.log("\n", fetchOptions);
+    // console.log("\n", endpoint.toString());
+    // console.log("\n", headers);
+    // console.log("\n", fetchOptions);
     return await fetch(endpoint.toString(), fetchOptions);
 };

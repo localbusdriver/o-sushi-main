@@ -55,8 +55,6 @@ function parseSushiTable(htmlString: string): SushiOrder {
         }
         orders["Total"] = (orders["Total"] || 0) + quantity;
     });
-
-    console.log(orders);
     return orders;
 }
 

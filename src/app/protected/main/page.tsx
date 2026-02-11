@@ -12,7 +12,7 @@ import { navLinks } from "@/lib/data/protected-sidebar-data";
 
 const Page = () => {
     return (
-        <div className="min-h-screen w-full bg-background px-4 py-6 sm:px-6 lg:px-8">
+        <div className="bg-background min-h-screen w-full px-4 py-6 sm:px-6 lg:px-8">
             <div className="mx-auto">
                 {/* Header Section */}
                 <header className="mb-6 flex flex-col items-start gap-2 sm:mb-8">
@@ -27,13 +27,13 @@ const Page = () => {
                         <Link
                             key={card.href}
                             href={card.href}
-                            className="block min-h-[150px]"
+                            className="block min-h-37.5"
                             passHref
                         >
                             <Card className="h-full transition-all duration-200 hover:scale-[1.02] hover:shadow-lg">
                                 <CardHeader className="p-4 sm:p-6">
                                     <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
-                                        <div className="rounded-lg bg-primary/10 p-3 text-primary sm:p-2">
+                                        <div className="bg-primary/10 text-primary rounded-lg p-3 sm:p-2">
                                             {card.icon}
                                         </div>
                                         <div className="space-y-1">
@@ -47,7 +47,7 @@ const Page = () => {
                                     </div>
                                 </CardHeader>
                                 <CardContent className="p-4 sm:p-6">
-                                    <div className="flex items-center text-sm text-muted-foreground">
+                                    <div className="text-muted-foreground flex items-center text-sm">
                                         Click to access
                                     </div>
                                 </CardContent>
