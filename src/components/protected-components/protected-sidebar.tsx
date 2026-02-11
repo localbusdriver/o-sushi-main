@@ -24,7 +24,7 @@ export function AppSidebar() {
                     <SidebarGroupContent>
                         <SidebarMenu>
                             {navLinks.map((item) => (
-                                <SidebarMenuItem key={item.title}>
+                                <SidebarMenuItem key={item.title + item.href}>
                                     <SidebarMenuButton asChild>
                                         <Link href={item.href} passHref>
                                             {item.icon}
