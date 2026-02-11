@@ -2,20 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 
 interface DoublesType {
     [key: string]: {
-        item: string;
-        quantity: number;
-        student: string;
-        school: string;
-        roomNumber: string;
+        member?: string;
+        roomNumber?: string;
+        item?: string;
+        quantity?: string;
+        organization?: string;
+        noDoubles?: string;
     };
-}
-
-interface OrderRecord {
-    student: string;
-    item: string;
-    quantity: number;
-    school: string;
-    roomNumber: string;
 }
 
 export async function POST(request: NextRequest) {
@@ -32,61 +25,50 @@ export async function POST(request: NextRequest) {
 
         // Read the CSV file
         const text = await file.text();
-        const lines = text.trim().split("\n");
 
-        if (lines.length < 2) {
+        if (!text || text.trim().length === 0) {
             return NextResponse.json(
-                { error: "CSV file appears to be empty or invalid" },
-                { status: 400 }
+                { results: { 1: { noDoubles: "Please Upload File" } } },
+                { status: 200 }
             );
         }
 
-        // Parse CSV (assuming format: student,item,quantity,school,roomNumber)
-        const headers = lines[0].split(",").map((h) => h.trim().toLowerCase());
-        const orders: OrderRecord[] = [];
-
-        for (let i = 1; i < lines.length; i++) {
-            const values = lines[i].split(",");
-            if (values.length >= 5) {
-                orders.push({
-                    student: values[0]?.trim() || "",
-                    item: values[1]?.trim() || "",
-                    quantity: parseInt(values[2]?.trim() || "0", 10),
-                    school: values[3]?.trim() || "",
-                    roomNumber: values[4]?.trim() || "",
-                });
-            }
+        // Split by lines and then by commas
+        if (text.trim().length === 0) {
+            return NextResponse.json(
+                { results: { 1: { noDoubles: "File is empty" } } },
+                { status: 200 }
+            );
         }
 
-        // Find duplicates - students who ordered the same item multiple times
-        const studentItemMap = new Map<string, OrderRecord[]>();
+        const lines = text.split("\n").map((line) => line.split(","));
 
-        for (const order of orders) {
-            const key = `${order.student}-${order.item}`;
-            if (!studentItemMap.has(key)) {
-                studentItemMap.set(key, []);
+        // Remove header row
+        lines.shift();
+
+        const results: DoublesType[] = [];
+
+        // Member:0, Location:1, Item:6, Quantity:10, Organization:22
+        lines.forEach((line) => {
+            // Check if quantity (index 10) is greater than 1
+            const quantity = line[10]?.trim();
+            if (quantity && parseInt(quantity, 10) > 1) {
+                const member = line[0]?.trim() || "";
+                const location = line[1]?.trim() || "";
+                const item = line[6]?.trim() || "";
+                const organization = line[22]?.trim() || "";
+
+                results.push({
+                    member: member,
+                    roomNumber: location,
+                    item: item,
+                    quantity: quantity,
+                    organization: organization,
+                } as DoublesType);
             }
-            studentItemMap.get(key)!.push(order);
-        }
+        });
 
-        // Identify double orders (same student, same item, multiple entries)
-        const results: DoublesType = {};
-        let doubleIndex = 0;
-
-        for (const [key, orderList] of studentItemMap.entries()) {
-            if (orderList.length > 1) {
-                // This is a double order
-                for (const order of orderList) {
-                    results[`double-${doubleIndex++}`] = {
-                        item: order.item,
-                        quantity: order.quantity,
-                        student: order.student,
-                        school: order.school,
-                        roomNumber: order.roomNumber,
-                    };
-                }
-            }
-        }
+        console.log(results);
 
         return NextResponse.json({ results }, { status: 200 });
     } catch (error) {

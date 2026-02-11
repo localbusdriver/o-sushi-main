@@ -96,6 +96,9 @@ export default function DoubleOrdersPage() {
             }
 
             const data = await response.json();
+
+            console.log(data.results);
+
             setResults(data.results);
         } catch (err) {
             setError(err instanceof Error ? err.message : "An error occurred");

@@ -97,12 +97,13 @@ export const SummaryTable = ({ results }: { results: SummaryType | null }) => {
     );
 };
 
-export const DoublesTable = ({ results }: { results: DoublesType | null }) => {
-    if (results === null) {
-        return null;
-    }
-
-    const isEmpty = Object.keys(results).length === 0;
+export const DoublesTable = ({
+    results,
+}: {
+    results: DoublesType[] | null;
+}) => {
+    const isEmpty = results === null || results.length === 0;
+    console.log(`results: ${results}`);
 
     return (
         <div className="w-full">
@@ -160,7 +161,7 @@ export const DoublesTable = ({ results }: { results: DoublesType | null }) => {
                                     className="px-4 py-3 font-medium text-green-700"
                                     colSpan={2}
                                 >
-                                    {value.student}
+                                    {value.member}
                                 </TableCell>
                                 <TableCell className="px-4 py-3">
                                     <div className="flex flex-col gap-1 text-blue-500">
@@ -176,7 +177,7 @@ export const DoublesTable = ({ results }: { results: DoublesType | null }) => {
                                     {value.quantity}
                                 </TableCell>
                                 <TableCell className="px-4 py-3 text-indigo-500">
-                                    {value.school}
+                                    {value.organization}
                                 </TableCell>
                                 <TableCell className="px-4 py-3 text-amber-500">
                                     {value.roomNumber}
