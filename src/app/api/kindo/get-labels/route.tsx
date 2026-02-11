@@ -6,13 +6,13 @@ export async function POST(req: NextRequest) {
     const { targetDate, cookies } = await req.json();
 
     const path = `?path=/supplier/osushi/label_pdf&target_date=${targetDate}&detail=label_pdf_sop_3x11`;
-    const referer = `https://shop.tgcl.co.nz/shop/supplier.shtml?supplier=osushi&date=${targetDate}&task=label_pdf_sop_3x11`;
+    // const referer = `https://shop.tgcl.co.nz/shop/supplier.shtml?supplier=osushi&date=${targetDate}&task=label_pdf_sop_3x11`;
 
     const response = await fetchKindoAPI({
         path: path,
         method: "GET",
         contentType: "application/json",
-        referer: referer,
+        // referer: referer,
         cookie: cookies,
     });
 

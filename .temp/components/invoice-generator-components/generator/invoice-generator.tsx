@@ -1,3 +1,5 @@
+/*
+
 import { Decimal } from "decimal.js";
 
 import type {
@@ -310,3 +312,4 @@ const PDFGenerator = async ({
 };
 
 export default PDFGenerator;
+*/

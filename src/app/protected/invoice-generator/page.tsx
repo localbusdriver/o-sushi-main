@@ -1,7 +1,8 @@
-import InvoiceForm from "@/components/invoice-generator-components/invoice-form";
+// import InvoiceForm from "../../../../temp/components/invoice-generator-components/invoice-form";
 
 const Page = () => {
-    return <InvoiceForm currentDate={new Date().toLocaleDateString("en-GB")} />;
+    return <div>Invoice Generator</div>;
+    // return <InvoiceForm currentDate={new Date().toLocaleDateString("en-GB")} />;
 };
 
 export default Page;

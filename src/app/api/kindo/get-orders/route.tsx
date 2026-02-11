@@ -1,10 +1,11 @@
 // src\app\api\kindo\get-orders\route.tsx
 import { NextRequest, NextResponse } from "next/server";
 
-import { parse } from "node-html-parser";
+// import { parse } from "node-html-parser";
 
 import { fetchKindoAPI } from "@/lib/utils";
 
+/*
 type Category =
     | "Avocado"
     | "Chicken teriyaki"
@@ -57,7 +58,7 @@ function parseSushiTable(htmlString: string): SushiOrder {
     });
     return orders;
 }
-
+*/
 export async function POST(req: NextRequest) {
     const { targetDate, cookies } = await req.json();
 
@@ -80,6 +81,7 @@ export async function POST(req: NextRequest) {
     }
 
     const responseText = await response.text();
-    const parsedOrders = parseSushiTable(responseText);
-    return NextResponse.json(parsedOrders, { status: response.status });
+    // const parsedOrders = parseSushiTable(responseText);
+    return NextResponse.json(responseText, { status: response.status });
+    // return NextResponse.json(parsedOrders, { status: response.status });
 }

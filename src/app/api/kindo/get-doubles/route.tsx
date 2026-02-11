@@ -13,8 +13,8 @@ const formatOrders = (unformattedOrders: any[]): DoublesType[] => {
         res.push({
             item: product,
             quantity: quantity,
-            student: student_name,
-            school: school,
+            member: student_name,
+            organization: school,
             roomNumber: student_room,
         });
     });
