@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -44,8 +45,14 @@ export default function OrderSummaryPage() {
             }
 
             const data = await response.json();
-            setResults(data.results);
+
+            console.log(data.parsedOrders);
+
+            setResults(data.parsedOrders);
         } catch (err) {
+            toast.error(
+                err instanceof Error ? err.message : "An error occurred"
+            );
             setError(err instanceof Error ? err.message : "An error occurred");
             setResults(null);
         } finally {
@@ -135,8 +142,8 @@ export default function OrderSummaryPage() {
                 {!results && !isLoading && inputText.trim() === "" && (
                     <div className="text-muted-foreground mt-12 text-center">
                         <p className="text-sm">
-                            Enter your order data above and click "Calculate
-                            Summary" to see results
+                            Enter your order data above and click
+                            &quot;Calculate Summary&quot; to see results
                         </p>
                     </div>
                 )}

@@ -4,13 +4,9 @@ interface OrderSummaryRequest {
     data: string;
 }
 
-interface SummaryType {
+interface ParsedOrderItem {
     [key: string]: number;
     Total: number;
-}
-
-interface ParsedOrderItem {
-    [key: string]: { pieces: number; product: string; quantity: number };
 }
 
 export async function POST(request: NextRequest) {
@@ -25,7 +21,7 @@ export async function POST(request: NextRequest) {
         }
 
         const lines = body.data.trim().split("\n");
-        const parsedOrders: ParsedOrderItem = {};
+        const parsedOrders: ParsedOrderItem = { Total: 0 };
 
         for (let i = 0; i < lines.length; i++) {
             const line = lines[i].trim();
@@ -55,14 +51,13 @@ export async function POST(request: NextRequest) {
                             const product = productMatch[1].trim();
                             const pieces = parseInt(productMatch[2], 10);
 
-                            parsedOrders[product] = {
-                                product: product,
-                                pieces: pieces,
-                                quantity:
-                                    ((parsedOrders[product] &&
-                                        parsedOrders[product].quantity) ??
-                                        0) + quantity,
-                            };
+                            if (parsedOrders[product]) {
+                                parsedOrders[product] += pieces * quantity;
+                            } else {
+                                parsedOrders[product] = pieces * quantity;
+                            }
+
+                            parsedOrders.Total += pieces * quantity;
                         }
 
                         // Move the outer loop index past this product line
@@ -72,23 +67,23 @@ export async function POST(request: NextRequest) {
                 }
             }
         }
+        if (parsedOrders["Mixed"]) {
+            if (parsedOrders["Chicken teriyaki"]) {
+                parsedOrders["Chicken teriyaki"] += parsedOrders["Mixed"] / 2;
+            } else {
+                parsedOrders["Chicken teriyaki"] = parsedOrders["Mixed"] / 2;
+            }
 
+            if (parsedOrders["Salmon & Avocado"]) {
+                parsedOrders["Salmon & Avocado"] += parsedOrders["Mixed"] / 2;
+            } else {
+                parsedOrders["Salmon & Avocado"] = parsedOrders["Mixed"] / 2;
+            }
+            delete parsedOrders["Mixed"];
+        }
         console.log(parsedOrders);
 
-        // Calculate summary by aggregating product-pieces combinations
-        const results: SummaryType = { Total: 0 };
-
-        for (const product in parsedOrders) {
-            const order = parsedOrders[product];
-            const totalPieces = order.quantity * order.pieces;
-
-            results[product] = (results[product] ?? 0) + totalPieces;
-            results.Total += totalPieces;
-        }
-
-        console.log(results);
-
-        return NextResponse.json({ results }, { status: 200 });
+        return NextResponse.json({ parsedOrders }, { status: 200 });
     } catch (error) {
         console.error("POST Error:", error);
         return NextResponse.json(
