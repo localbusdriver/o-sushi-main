@@ -12,7 +12,7 @@ export function SchoolSummaryNav() {
     const isDoubleOrders = pathname.includes("/double-orders");
 
     return (
-        <header className="bg-background/95 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 w-full border-b backdrop-blur">
+        <header className="bg-background/95 supports-backdrop-filter:bg-background/60 sticky top-0 z-50 w-full border-b backdrop-blur">
             <div className="container flex h-16 items-center justify-between px-4 sm:px-6">
                 {/* Logo/Home Link */}
                 <Link

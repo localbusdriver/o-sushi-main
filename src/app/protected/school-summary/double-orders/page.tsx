@@ -149,7 +149,7 @@ export default function DoubleOrdersPage() {
                                 isDragging
                                     ? "border-primary bg-primary/5"
                                     : "border-border hover:border-primary/50"
-                            } ${selectedFile ? "min-h-[120px]" : "min-h-[200px]"}`}
+                            } ${selectedFile ? "min-h-30" : "min-h-50"}`}
                         >
                             <div className="flex flex-col items-center justify-center p-6 text-center">
                                 {!selectedFile ? (

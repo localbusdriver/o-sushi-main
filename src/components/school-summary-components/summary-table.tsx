@@ -32,15 +32,15 @@ export const SummaryTable = ({ results }: { results: SummaryType | null }) => {
                     </TableRow>
                     <TableRow className="hover:bg-transparent">
                         <TableHead
-                            className="bg-muted sticky top-[57px] px-4 py-3 font-semibold"
+                            className="bg-muted sticky top-14.25 px-4 py-3 font-semibold"
                             colSpan={2}
                         >
                             Item
                         </TableHead>
-                        <TableHead className="bg-muted sticky top-[57px] px-4 py-3 text-right font-semibold">
+                        <TableHead className="bg-muted sticky top-14.25 px-4 py-3 text-right font-semibold">
                             Rolls
                         </TableHead>
-                        <TableHead className="bg-muted sticky top-[57px] px-4 py-3 text-right font-semibold">
+                        <TableHead className="bg-muted sticky top-14.25 px-4 py-3 text-right font-semibold">
                             Pieces
                         </TableHead>
                     </TableRow>
@@ -127,21 +127,21 @@ export const DoublesTable = ({ data }: { data: DoublesResponse | null }) => {
                     </TableRow>
                     <TableRow className="hover:bg-transparent">
                         <TableHead
-                            className="bg-muted sticky top-[57px] px-4 py-3 font-semibold text-green-700"
+                            className="bg-muted sticky top-14.25 px-4 py-3 font-semibold text-green-700"
                             colSpan={2}
                         >
                             Name
                         </TableHead>
-                        <TableHead className="bg-muted sticky top-[57px] px-4 py-3 font-semibold text-blue-500">
+                        <TableHead className="bg-muted sticky top-14.25 px-4 py-3 font-semibold text-blue-500">
                             Item
                         </TableHead>
-                        <TableHead className="bg-muted sticky top-[57px] px-4 py-3 font-semibold text-orange-500">
+                        <TableHead className="bg-muted sticky top-14.25 px-4 py-3 font-semibold text-orange-500">
                             Quantity
                         </TableHead>
-                        <TableHead className="bg-muted sticky top-[57px] px-4 py-3 font-semibold text-indigo-500">
+                        <TableHead className="bg-muted sticky top-14.25 px-4 py-3 font-semibold text-indigo-500">
                             Organization
                         </TableHead>
-                        <TableHead className="bg-muted sticky top-[57px] px-4 py-3 font-semibold text-amber-500">
+                        <TableHead className="bg-muted sticky top-14.25 px-4 py-3 font-semibold text-amber-500">
                             Room no.
                         </TableHead>
                     </TableRow>

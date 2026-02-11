@@ -86,7 +86,7 @@ export default function OrderSummaryPage() {
                             placeholder="Paste your order data here...&#10;&#10;Example format:&#10;Item 1 - Description: 10&#10;Item 2 - Description: 20&#10;..."
                             value={inputText}
                             onChange={(e) => setInputText(e.target.value)}
-                            className="min-h-[200px] resize-y font-mono text-sm"
+                            className="min-h-50 resize-y font-mono text-sm"
                         />
                     </div>
 
