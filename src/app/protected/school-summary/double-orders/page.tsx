@@ -9,11 +9,11 @@ import { Button } from "@/components/ui/button";
 import { SchoolSummaryNav } from "@/components/school-summary-components/school-summary-nav";
 import { DoublesTable } from "@/components/school-summary-components/summary-table";
 
-import type { DoublesType } from "@/lib/types/school-summary-types";
+import type { DoublesResponse } from "@/lib/types/school-summary-types";
 
 export default function DoubleOrdersPage() {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
-    const [results, setResults] = useState<DoublesType | null>(null);
+    const [results, setResults] = useState<DoublesResponse | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [isDragging, setIsDragging] = useState(false);
@@ -97,12 +97,15 @@ export default function DoubleOrdersPage() {
 
             const data = await response.json();
 
-            console.log(data.results);
+            console.log(data as DoublesResponse);
 
-            setResults(data.results);
+            setResults(data);
         } catch (err) {
             setError(err instanceof Error ? err.message : "An error occurred");
-            setResults(null);
+            setResults({
+                results: [],
+                message: "An error occurred",
+            } as DoublesResponse);
         } finally {
             setIsLoading(false);
         }
@@ -265,7 +268,7 @@ export default function DoubleOrdersPage() {
                         </div>
 
                         <div className="bg-card overflow-x-auto rounded-lg border shadow-sm">
-                            <DoublesTable results={results} />
+                            <DoublesTable data={results} />
                         </div>
                     </div>
                 )}

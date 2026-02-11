@@ -1,9 +1,14 @@
 export interface DoublesType {
     item: string;
     quantity: number;
-    student: string;
-    school: string;
+    member: string;
+    organization: string;
     roomNumber: string;
+}
+
+export interface DoublesResponse {
+    results: DoublesType[];
+    message: string;
 }
 
 export interface SummaryType {

@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/table";
 
 import type {
+    DoublesResponse,
     DoublesType,
     SummaryType,
 } from "@/lib/types/school-summary-types";
@@ -97,13 +98,17 @@ export const SummaryTable = ({ results }: { results: SummaryType | null }) => {
     );
 };
 
-export const DoublesTable = ({
-    results,
-}: {
-    results: DoublesType[] | null;
-}) => {
-    const isEmpty = results === null || results.length === 0;
-    console.log(`results: ${results}`);
+export const DoublesTable = ({ data }: { data: DoublesResponse | null }) => {
+    if (data === null || data === undefined) {
+        return null;
+    }
+
+    const results = data.results as DoublesType[];
+    const isEmpty =
+        results === undefined || results === null || results.length === 0;
+    const errorMessage = data?.message;
+
+    console.log(`results: ${data}`);
 
     return (
         <div className="w-full">
@@ -148,10 +153,11 @@ export const DoublesTable = ({
                                 colSpan={6}
                                 className="text-muted-foreground px-4 py-8 text-center"
                             >
-                                No double orders found
+                                {errorMessage || "No double orders found"}
                             </TableCell>
                         </TableRow>
                     ) : (
+                        results &&
                         Object.entries(results).map(([key, value]) => (
                             <TableRow
                                 key={key}

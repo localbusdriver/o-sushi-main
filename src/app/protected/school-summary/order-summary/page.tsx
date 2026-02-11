@@ -46,9 +46,9 @@ export default function OrderSummaryPage() {
 
             const data = await response.json();
 
-            console.log(data.parsedOrders);
+            console.log(data);
 
-            setResults(data.parsedOrders);
+            setResults(data);
         } catch (err) {
             toast.error(
                 err instanceof Error ? err.message : "An error occurred"
@@ -70,10 +70,6 @@ export default function OrderSummaryPage() {
                     <h1 className="text-3xl font-bold tracking-tight">
                         Summary Reporter
                     </h1>
-                    <p className="text-muted-foreground mt-2">
-                        Paste your order data to generate a comprehensive
-                        summary report
-                    </p>
                 </div>
 
                 {/* Input Section */}
