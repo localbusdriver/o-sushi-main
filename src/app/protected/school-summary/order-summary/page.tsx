@@ -46,9 +46,7 @@ export default function OrderSummaryPage() {
 
             const data = await response.json();
 
-            console.log(data);
-
-            setResults(data);
+            setResults(data.parsedOrders);
         } catch (err) {
             toast.error(
                 err instanceof Error ? err.message : "An error occurred"
